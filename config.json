@@ -1,0 +1,25 @@
+{
+    "name": "Mark's Test Module",
+    "namespace": "Vanderbilt\\MarksTestModule",
+    "framework-version": 5,
+    "description": "Used for miscellaneous on the fly testing.",
+    "authors": [
+        {
+            "name": "Mark McEver",
+            "email": "datacore@vumc.org",
+            "institution": "Vanderbilt University Medical Center"
+        }
+    ],
+    "permissions": [
+        ""
+    ],
+    "crons": [
+        {
+            "cron_name": "cron",
+            "cron_description": "",
+            "method": "cron",
+            "cron_frequency": "60",
+            "cron_max_run_time": "60"
+        }
+    ]
+}
