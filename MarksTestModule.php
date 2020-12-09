@@ -12,14 +12,6 @@ class MarksTestModule extends \ExternalModules\AbstractExternalModule{
                 $logId = $this->log('token match', [
                     'content' => json_encode($_POST, JSON_PRETTY_PRINT)
                 ]);
-
-                global $from_email;
-                \REDCap::email(
-                    'mark.mcever@vumc.org',
-                    $from_email,
-                    "API Token Match!",
-                    "See log ID $logId for details."
-                );
             }
         }
     }
