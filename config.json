@@ -2,8 +2,7 @@
     "name": "Mark's Test Module",
     "namespace": "Vanderbilt\\MarksTestModule",
     "framework-version": 5,
-    "enable-every-page-hooks-on-system-pages": true,
-    "description": "Used for miscellaneous on the fly testing.",
+    "description": "Used for miscellaneous testing.",
     "authors": [
         {
             "name": "Mark McEver",
@@ -12,6 +11,5 @@
         }
     ],
     "permissions": [
-        "redcap_every_page_before_render"
     ]
 }
