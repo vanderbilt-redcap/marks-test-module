@@ -78,6 +78,10 @@ class MarksTestModule extends \ExternalModules\AbstractExternalModule{
         $download(1542);
         $download(1544);
         $download('https://github.com/vanderbilt-redcap/flight-tracker/archive/refs/tags/4.12.2.zip');
+        $download('https://redcap.vanderbilt.edu/plugins/mark-test/mycap-module-1.15.0.zip');
+        $download('https://victr.vumc.org/wp-content/mycap-module-1.15.0.zip');
+
+        return;
 
         // Errors?
         if ($moduleZipContents == 'ERROR') {
