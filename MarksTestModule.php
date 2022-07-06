@@ -130,7 +130,7 @@ class MarksTestModule extends \ExternalModules\AbstractExternalModule{
 
         echo 'file count 4 - new - ' . iterator_count(
             new \RecursiveIteratorIterator(
-                new \RecursiveDirectoryIterator($tempDir, \FilesystemIterator::SKIP_DOTS)
+                new \RecursiveDirectoryIterator($moduleFolderDir, \FilesystemIterator::SKIP_DOTS)
             )
         ) . "\n";
 
