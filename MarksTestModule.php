@@ -39,6 +39,10 @@ class MarksTestModule extends \ExternalModules\AbstractExternalModule{
 			}
 		}
 
+        var_dump([
+            'free space' => disk_free_space($tempDir)
+        ]);
+
 		if(!mkdir($tempDir)){
 			// Another process just created this directory and is actively downloading the module.
 			// Simply tell the user to retry if this request came from the UI.
@@ -80,7 +84,9 @@ class MarksTestModule extends \ExternalModules\AbstractExternalModule{
         $zip = new \ZipArchive;
         $openStatus = $zip->open($filename);
         if ($openStatus === TRUE) {
-            $zip->extractTo($tempDir);
+            if(!$zip->extractTo($tempDir)){
+                return 'extract failed';
+            }
             $zip->close();
         }
         else{
@@ -89,11 +95,48 @@ class MarksTestModule extends \ExternalModules\AbstractExternalModule{
         // Remove temp file
         unlink($filename);
 
+        var_dump(['file count 1', iterator_count(
+            new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($tempDir, \FilesystemIterator::SKIP_DOTS)
+            )
+        )]);
+
         ExternalModules::removeEditorDirectories($tempDir.DS.$moduleFolderName);
-        
+
+        var_dump(['file count 2', iterator_count(
+            new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($tempDir, \FilesystemIterator::SKIP_DOTS)
+            )
+        )]);
+
         // Move the extracted directory to it's final location
         $moduleFolderDir = $modulesDir . $moduleFolderName . DS;
-        rename($tempDir.DS.$moduleFolderName, $moduleFolderDir);
+
+        var_dump([
+            'source' => $tempDir.DS.$moduleFolderName,
+            'destination' => $moduleFolderDir,
+            'children' => glob($tempDir.DS.'*'),
+        ]);
+
+        if(file_exists($moduleFolderDir)){
+            return 'destination already exists';
+        }
+
+        if(!rename($tempDir.DS.$moduleFolderName, $moduleFolderDir)){
+            return 'rename failed';
+        };
+
+        var_dump(['file count 3 - old', iterator_count(
+            new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($tempDir, \FilesystemIterator::SKIP_DOTS)
+            )
+        )]);
+
+        var_dump(['file count 4 - new', iterator_count(
+            new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($moduleFolderDir, \FilesystemIterator::SKIP_DOTS)
+            )
+        )]);
 
         // Now double check that the new module directory got created
         if (!(file_exists($moduleFolderDir) && is_dir($moduleFolderDir))) {
@@ -103,14 +146,16 @@ class MarksTestModule extends \ExternalModules\AbstractExternalModule{
             ]);
             return "3";
         }
-
-        var_dump(['file count', iterator_count(
-            new \RecursiveIteratorIterator(
-                new \RecursiveDirectoryIterator($tempDir, \FilesystemIterator::SKIP_DOTS)
-            )
-        )]);
         
         self::removeModuleDirectory($tempDir);
+        if(file_exists($tempDir)){
+            return 'temp dir was not deleted!';
+        }
+
+        self::removeModuleDirectory($moduleFolderDir);
+        if(file_exists($moduleFolderDir)){
+            return 'module dir was not deleted!';
+        }
 
         return 'success';
 	}
