@@ -67,15 +67,36 @@ class MarksTestModule extends \ExternalModules\AbstractExternalModule{
             // 1 = Module zip couldn't be written to temp
             return "1";
         }
+
+        echo "zip size 1 - " . filesize($filename) . "\n";
+
         // Extract the module to /redcap/modules
         $zip = new \ZipArchive;
         $openStatus = $zip->open($filename);
         if ($openStatus !== TRUE) {
             return "2 $openStatus";
         }
+
+        $showZip = function($zip){
+            echo 'numFiles - ' . $zip->numFiles . "\n";
+            for( $i = 0; $i < $zip->numFiles; $i++ ){
+                $stat = $zip->statIndex( $i );
+                $parts = explode('/', $stat['name']);
+    
+                if(count($parts) < 3){
+                    echo 'file: ' . $stat['name'] . "\n";
+                }
+            }
+        };
+
+        $showZip($zip);
+
         // First, we need to rename the parent folder in the zip because GitHub has it as something else
         ExternalModules::normalizeModuleZip($moduleFolderName, $zip);
         $zip->close();
+
+        echo "zip size 2 - " . filesize($filename) . "\n";
+
         // Now extract the zip to the modules folder
         $zip = new \ZipArchive;
         $openStatus = $zip->open($filename);
@@ -83,6 +104,9 @@ class MarksTestModule extends \ExternalModules\AbstractExternalModule{
             if(!$zip->extractTo($tempDir)){
                 return 'extract failed';
             }
+
+            $showZip($zip);
+
             $zip->close();
         }
         else{
