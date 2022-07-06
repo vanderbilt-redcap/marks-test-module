@@ -56,9 +56,15 @@ class MarksTestModule extends \ExternalModules\AbstractExternalModule{
         }
         var_dump(['$postParams', $postParams]);
 
-        $download = function($module_id) use ($postParams){
-            $moduleZipContents = http_post(APP_URL_EXTMOD_LIB . "download.php?module_id=$module_id", $postParams);
-            echo "download size $module_id - " . strlen($moduleZipContents) . "\n";
+        $download = function($mixed) use ($postParams){
+            if(is_numeric($mixed)){
+                $moduleZipContents = http_post(APP_URL_EXTMOD_LIB . "download.php?module_id=$mixed", $postParams);
+            }
+            else{
+                $moduleZipContents = http_get($mixed);
+            }
+
+            echo "download size $mixed - " . strlen($moduleZipContents) . "\n";
             if(strlen($moduleZipContents) < 1000){
                 var_dump(['$moduleZipContents', $moduleZipContents]);
             }
@@ -71,6 +77,7 @@ class MarksTestModule extends \ExternalModules\AbstractExternalModule{
 
         $download(1542);
         $download(1544);
+        $download('https://github.com/vanderbilt-redcap/flight-tracker/archive/refs/tags/4.12.2.zip');
 
         // Errors?
         if ($moduleZipContents == 'ERROR') {
