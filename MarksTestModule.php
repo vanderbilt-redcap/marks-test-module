@@ -58,7 +58,12 @@ class MarksTestModule extends \ExternalModules\AbstractExternalModule{
 
         $download = function($mixed) use ($postParams){
             if(is_numeric($mixed)){
-                $moduleZipContents = http_post(APP_URL_EXTMOD_LIB . "download.php?module_id=$mixed", $postParams);
+                $client = new \GuzzleHttp\Client;
+                $response = $client->request('POST', APP_URL_EXTMOD_LIB . "download.php?module_id=$mixed", [
+                    'form_params' => $postParams
+                ]);
+
+                $moduleZipContents = $response->getBody()->getContents();
             }
             else{
                 $moduleZipContents = http_get($mixed);
