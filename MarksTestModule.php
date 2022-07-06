@@ -30,7 +30,7 @@ class MarksTestModule extends \ExternalModules\AbstractExternalModule{
 			if(filemtime($tempDir) > time()-30){
 				// The temp dir was just created.  Assume another process is still actively downloading this module
 				// Simply tell the user to retry if this request came from the UI.
-				return '4a';
+				return '4a - Please wait a minute and try again.';
 			}
 			else{
 				// The last download process likely failed.  Removed the folder and try again.
