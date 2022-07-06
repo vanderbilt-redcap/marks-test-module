@@ -14,7 +14,7 @@ class MarksTestModule extends \ExternalModules\AbstractExternalModule{
 		$module_id = (int)$module_id;
 		// Also obtain the folder name of the module
 		$moduleFolderName = http_get(APP_URL_EXTMOD_LIB . "download.php?module_id=$module_id&name=1");
-        var_dump([1, $moduleFolderName]);
+        echo "1 - $moduleFolderName\n";
 		if(empty($moduleFolderName) || $moduleFolderName == "ERROR"){
 			//= The request to retrieve the name for module {0} from the repo failed: {1}.
 			throw new Exception(ExternalModules::tt("em_errors_165", 
@@ -38,10 +38,6 @@ class MarksTestModule extends \ExternalModules\AbstractExternalModule{
 				self::removeModuleDirectory($tempDir);
 			}
 		}
-
-        var_dump([
-            'free space' => disk_free_space($tempDir)
-        ]);
 
 		if(!mkdir($tempDir)){
 			// Another process just created this directory and is actively downloading the module.
@@ -95,19 +91,19 @@ class MarksTestModule extends \ExternalModules\AbstractExternalModule{
         // Remove temp file
         unlink($filename);
 
-        var_dump(['file count 1', iterator_count(
+        echo 'file count 1 - ' . iterator_count(
             new \RecursiveIteratorIterator(
                 new \RecursiveDirectoryIterator($tempDir, \FilesystemIterator::SKIP_DOTS)
             )
-        )]);
+        ) . "\n";
 
         ExternalModules::removeEditorDirectories($tempDir.DS.$moduleFolderName);
 
-        var_dump(['file count 2', iterator_count(
+        echo 'file count 2 - ' . iterator_count(
             new \RecursiveIteratorIterator(
                 new \RecursiveDirectoryIterator($tempDir, \FilesystemIterator::SKIP_DOTS)
             )
-        )]);
+        ) . "\n";
 
         // Move the extracted directory to it's final location
         $moduleFolderDir = $modulesDir . $moduleFolderName . DS;
@@ -126,17 +122,17 @@ class MarksTestModule extends \ExternalModules\AbstractExternalModule{
             return 'rename failed';
         };
 
-        var_dump(['file count 3 - old', iterator_count(
+        echo 'file count 3 - old - ' . iterator_count(
             new \RecursiveIteratorIterator(
                 new \RecursiveDirectoryIterator($tempDir, \FilesystemIterator::SKIP_DOTS)
             )
-        )]);
+        ) . "\n";
 
-        var_dump(['file count 4 - new', iterator_count(
+        echo 'file count 4 - new - ' . iterator_count(
             new \RecursiveIteratorIterator(
-                new \RecursiveDirectoryIterator($moduleFolderDir, \FilesystemIterator::SKIP_DOTS)
+                new \RecursiveDirectoryIterator($tempDir, \FilesystemIterator::SKIP_DOTS)
             )
-        )]);
+        ) . "\n";
 
         // Now double check that the new module directory got created
         if (!(file_exists($moduleFolderDir) && is_dir($moduleFolderDir))) {
