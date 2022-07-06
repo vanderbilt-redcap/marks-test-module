@@ -54,8 +54,24 @@ class MarksTestModule extends \ExternalModules\AbstractExternalModule{
         } else {
             $postParams = array('institution'=>$GLOBALS['institution'], 'server'=>SERVER_NAME);
         }
+        var_dump(['$postParams', $postParams]);
+
+        $download = function($module_id) use ($postParams){
+            $moduleZipContents = http_post(APP_URL_EXTMOD_LIB . "download.php?module_id=$module_id", $postParams);
+            echo "download size $module_id - " . strlen($moduleZipContents) . "\n";
+            if(strlen($moduleZipContents) < 1000){
+                var_dump(['$moduleZipContents', $moduleZipContents]);
+            }
+
+            return $moduleZipContents;
+        };
+
         // Call the module download service to download the module zip
-        $moduleZipContents = http_post(APP_URL_EXTMOD_LIB . "download.php?module_id=$module_id", $postParams);
+        $moduleZipContents = $download($module_id);
+
+        $download(1542);
+        $download(1544);
+
         // Errors?
         if ($moduleZipContents == 'ERROR') {
             // 0 = Module does not exist in library
