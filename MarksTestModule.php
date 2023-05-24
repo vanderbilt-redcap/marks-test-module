@@ -9,22 +9,12 @@ class MarksTestModule extends \ExternalModules\AbstractExternalModule{
             return;
         }
 
-        $_SERVER['PHP_SELF'] .= 'Logging/csv_export.php';
-        db_connect();
-
-        if($GLOBALS['rc_replica_connection'] === null){
-            $result = 'replica not initialized!';
+        if(!\System::useReadReplicaDB()){
+            $result = 'replica not being used!';
         }
         else{
-            // Paranoid way of making sure the replica is used
-            $originalConnection = $GLOBALS['rc_connection'];
-            $GLOBALS['rc_connection'] = $GLOBALS['rc_replica_connection'];
-    
             $result = \ExternalModules\ExternalModules::getDiscoverableModules();
-
-            $GLOBALS['rc_connection'] = $originalConnection;
         }
-
 
         ?>
         <script>
