@@ -9,7 +9,7 @@ class MarksTestModule extends \ExternalModules\AbstractExternalModule{
             return;
         }
 
-        $_SERVER['PHP_SELF'] .= 'ControlCenter/stats_ajax.php';
+        $_SERVER['PHP_SELF'] .= 'Logging/csv_export.php';
         db_connect();
 
         if($GLOBALS['rc_replica_connection'] === null){
