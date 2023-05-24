@@ -1,7 +1,7 @@
 {
     "name": "Mark's Test Module",
     "namespace": "Vanderbilt\\MarksTestModule",
-    "framework-version": 5,
+    "framework-version": 12,
     "description": "Used for miscellaneous testing.",
     "authors": [
         {
@@ -9,8 +9,6 @@
             "email": "datacore@vumc.org",
             "institution": "Vanderbilt University Medical Center"
         }
-    ],
-    "permissions": [
     ],
     "links": {
 		"project": [
