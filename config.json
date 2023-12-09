@@ -14,13 +14,13 @@
         "cors-example"
     ],
     "links": {
-		"project": [
-			{
-				"name": "Mark's Test Page",
-				"icon": "fas fa-file",
+        "control-center": [
+            {
+                "name": "Top Usage Report",
+                "icon": "fas fa-file",
                 "url": "test.php",
-				"show-header-and-footer": true
-			}
+                "show-header-and-footer": true
+            }
         ]
-	}
+    }
 }
