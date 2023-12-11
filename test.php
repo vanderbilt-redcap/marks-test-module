@@ -5,6 +5,7 @@
  *      Why does keep alive show up under general & specific
  *      Finalize datatable
  *      add filter for type (user/project/url/url w/o params)
+ *      add filter for api vs. non?
  *      show quick lists of current tops w/ links to stats for each showing hourly usage
  *          maybe not feasible
  *              line chart w/ area underneath broken up by one category at a time?  Can then drill down into that category to break it down further by another category?
@@ -89,11 +90,11 @@ $getTops = function() use ($module){
                 $time = $details['time'];
 
                 if(in_array($type, [$userColumnName, $projectColumnName])){
-                    $identifier = "$type: $identifier";
+                    $apiString = $isApi ? 'API' : 'non-API';
+                    $identifier = "$type: $identifier ($apiString)";
                 }
 
                 $tops[] = [
-                    'isApi' => $isApi,
                     'identifier' => $identifier,
                     'requests' => $requests,
                     'time' => $time,
