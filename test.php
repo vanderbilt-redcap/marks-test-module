@@ -93,6 +93,10 @@ $getTops = function() use ($module){
                     $apiString = $isApi ? 'API' : 'non-API';
                     $identifier = "$type: $identifier ($apiString)";
                 }
+                else if(in_array($type, [$specificURLColumnName, $generalURLColumnName])){
+                    $identifier = str_replace(APP_PATH_WEBROOT_FULL, '/', $identifier);
+                    $identifier = str_replace(APP_PATH_WEBROOT, '/', $identifier);
+                }
 
                 $tops[] = [
                     'identifier' => $identifier,
