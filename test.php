@@ -88,17 +88,20 @@ $getTops = function() use ($module){
 
                 $requests = $details['requests'];
                 $time = $details['time'];
+                $displayType = $type;
 
                 if(in_array($type, [$userColumnName, $projectColumnName])){
                     $apiString = $isApi ? 'API' : 'non-API';
-                    $identifier = "$type: $identifier ($apiString)";
+                    $identifier = "$identifier ($apiString)";
                 }
                 else if(in_array($type, [$specificURLColumnName, $generalURLColumnName])){
+                    $displayType = 'URL';
                     $identifier = str_replace(APP_PATH_WEBROOT_FULL, '/', $identifier);
                     $identifier = str_replace(APP_PATH_WEBROOT, '/', $identifier);
                 }
 
                 $tops[] = [
+                    'Type' => $displayType,
                     'identifier' => $identifier,
                     'requests' => $requests,
                     'time' => $time,
