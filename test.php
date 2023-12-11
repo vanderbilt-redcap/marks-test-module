@@ -2,7 +2,9 @@
 
 /**
  * TODO
- *      getTops() is looking good
+ *      Why does keep alive show up under general & specific
+ *      Finalize datatable
+ *      add filter for type (user/project/url/url w/o params)
  *      show quick lists of current tops w/ links to stats for each showing hourly usage
  *          maybe not feasible
  *              line chart w/ area underneath broken up by one category at a time?  Can then drill down into that category to break it down further by another category?
@@ -32,12 +34,17 @@
  */
 
 $getTops = function() use ($module){
+    $userColumnName = 'User';
+    $projectColumnName = 'Project';
+    $specificURLColumnName = 'Specific URL';
+    $generalURLColumnName = 'General URL';
+
     $result = $module->query("
         select
-            v.user,
-            v.project_id,
-            full_url,
-            substring_index(full_url,'?',1) as url_without_params,
+            v.user as '$userColumnName',
+            v.project_id as '$projectColumnName',
+            full_url as '$specificURLColumnName',
+            substring_index(full_url,'?',1) as '$generalURLColumnName',
             page = 'api/index.php' as is_api,
             script_execution_time
         from redcap_log_view_requests r
@@ -53,10 +60,10 @@ $getTops = function() use ($module){
     $totals = [];
     while($row = $result->fetch_assoc()){
         $types = [
-            'user',
-            'project_id',
-            'full_url',
-            'url_without_params',
+            $userColumnName,
+            $projectColumnName,
+            $specificURLColumnName,
+            $generalURLColumnName,
         ];
 
         foreach($types as $type){
@@ -81,9 +88,12 @@ $getTops = function() use ($module){
                 $requests = $details['requests'];
                 $time = $details['time'];
 
+                if(in_array($type, [$userColumnName, $projectColumnName])){
+                    $identifier = "$type: $identifier";
+                }
+
                 $tops[] = [
                     'isApi' => $isApi,
-                    'type' => $type,
                     'identifier' => $identifier,
                     'requests' => $requests,
                     'time' => $time,
