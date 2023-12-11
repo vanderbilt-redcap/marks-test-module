@@ -4,6 +4,7 @@
  * TODO
  *      Why does keep alive show up under general & specific
  *      Finalize datatable
+ *      add option for time range
  *      add filter for type (user/project/url/url w/o params)
  *      add filter for api vs. non?
  *      add note saying requests & time are counted twice between different types (user/project/specificUrl/generalUrl)
@@ -49,7 +50,6 @@ $getTops = function() use ($module){
             v.user as '$userColumnName',
             v.project_id as '$projectColumnName',
             full_url as '$specificURLColumnName',
-            substring_index(full_url,'?',1) as '$generalURLColumnName',
             page = 'api/index.php' as is_api,
             script_execution_time
         from redcap_log_view_requests r
@@ -72,7 +72,20 @@ $getTops = function() use ($module){
         ];
 
         foreach($types as $type){
-            $details = &$groups[$row['is_api']][$type][$row[$type]];
+            if($type === $generalURLColumnName){
+                $parts = explode('?', $row[$specificURLColumnName]);
+                if(count($parts) === 1){
+                    // This URL doesn't have params, and will already be counted as a specific URL
+                    continue;
+                }
+
+                $identifier = $parts[0];
+            }
+            else{
+                $identifier = $row[$type];
+            }
+
+            $details = &$groups[$row['is_api']][$type][$identifier];
             $details['requests']++;
             $details['time'] += $row['script_execution_time'];
         }
