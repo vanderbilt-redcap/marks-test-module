@@ -36,6 +36,8 @@
  *          Would it be too much 
  */
 
+const CPU_PERCENT_COLUMN_NAME = 'Percentage of Total CPU Time';
+
 $getTops = function() use ($module){
     $userColumnName = 'User';
     $projectColumnName = 'Project';
@@ -106,7 +108,7 @@ $getTops = function() use ($module){
                     'Type' => $displayType,
                     'Identifier' => $identifier,
                     'CPU Time (hours)' => round($time/60/60, 2),
-                    'Percentage of Total CPU Time' => round($time/$totals['time']*100, 3),
+                    CPU_PERCENT_COLUMN_NAME => round($time/$totals['time']*100, 3),
                     'Request Count' => $requests,
                     'Percentage of All Requests' => round($requests/$totals['requests']*100, 3),
                     'Average Seconds Per Request' => round($time/$requests, 3),
@@ -121,8 +123,12 @@ $getTops = function() use ($module){
 $tops = $getTops();
 
 $columns = [];
-foreach(array_keys($tops[0])as $column){
+foreach(array_keys($tops[0]) as $i=>$column){
     $columns[] = ['title' => $column];
+
+    if($column === CPU_PERCENT_COLUMN_NAME){
+        $sortColumn = $i;
+    }
 }
 
 $rows = [];
@@ -146,7 +152,8 @@ $module->initializeJavascriptModuleObject();
 
     $(container.querySelector('table')).DataTable({
         columns: <?=json_encode($columns)?>,
-        data: <?=json_encode($rows)?>
+        data: <?=json_encode($rows)?>,
+        order: [[<?=$sortColumn?>, 'desc']],
     })
 })()
 </script>
