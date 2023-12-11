@@ -6,6 +6,8 @@
  *      Finalize datatable
  *      add filter for type (user/project/url/url w/o params)
  *      add filter for api vs. non?
+ *      add note saying requests & time are counted twice between different types (user/project/specificUrl/generalUrl)
+ *          It is still useful to see different types side by side to determine top usage, but totals & percents will add up to more than 100% across types.
  *      show quick lists of current tops w/ links to stats for each showing hourly usage
  *          maybe not feasible
  *              line chart w/ area underneath broken up by one category at a time?  Can then drill down into that category to break it down further by another category?
