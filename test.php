@@ -102,13 +102,11 @@ $getTops = function() use ($module){
 
                 $tops[] = [
                     'Type' => $displayType,
-                    'identifier' => $identifier,
-                    'requests' => $requests,
-                    'time' => $time,
-                    'CPU Time In Hours' => round($time/60/60, 2),
+                    'Identifier' => $identifier,
+                    'CPU Time (hours)' => round($time/60/60, 2),
                     'Percentage of Total CPU Time' => round($time/$totals['time']*100, 3),
-                    'Requests' => $requests,
-                    'Percentage of Requests' => round($requests/$totals['requests']*100, 3),
+                    'Request Count' => $requests,
+                    'Percentage of All Requests' => round($requests/$totals['requests']*100, 3),
                     'Average Seconds Per Request' => round($time/$requests, 3),
                 ];
             }
