@@ -2,8 +2,12 @@
 
 /**
  * TODO
+ *      Store 3 days instead of 1
+ *      Ask Scott about summarizing performance data
+ *      add "(all sub-urls)" after general urls?!?
  *      Why did last commits remove a bunch of rows, like /api?!?
  *      Why does keep alive show up under general & specific
+ *      Make sure control center module pages are limited to admins
  *      Finalize datatable
  *      add option for time range
  *      add filter for type (user/project/url/url w/o params)
