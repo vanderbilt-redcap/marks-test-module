@@ -1,45 +1,56 @@
 <?php namespace MarksTestModule;
 
 /**
- * TODO
- *      Store 3 days instead of 1
- *      Ask Scott about summarizing performance data
- *      add "(all sub-urls)" after general urls?!?
- *      Why did last commits remove a bunch of rows, like /api?!?
- *      Why does keep alive show up under general & specific
- *      Make sure control center module pages are limited to admins
- *      Finalize datatable
- *      add option for time range
- *      add filter for type (user/project/url/url w/o params)
- *      add filter for api vs. non?
- *      add note saying requests & time are counted twice between different types (user/project/specificUrl/generalUrl)
- *          It is still useful to see different types side by side to determine top usage, but totals & percents will add up to more than 100% across types.
- *      show quick lists of current tops w/ links to stats for each showing hourly usage
- *          maybe not feasible
- *              line chart w/ area underneath broken up by one category at a time?  Can then drill down into that category to break it down further by another category?
- *      show to Rob to see if expanding to days would be useful
- *      store & compare with history for previous days
- *      link to project from pid?
- *      order by sum(script_execution_time) desc
- *      For each line, should we show +/- for last hour, last X hours, yesterday, last week, last month?
- *      Before committing, move to another module, review/rename everything?
- *      use a timed cron!  it will work just fine as-is in this case
- *      limit to last 24 hours, in case period of saved stats ever changes
- *      store daily via logs table?
- *          $r = $module->queryLogs('
+TODO
+    uncommitted changes
+    Disable paging?
+    Consider avoiding stats deletion for items in this query
+        Query to figure out what percentage of rows would be left
+        Multiple by percentage of table size to estimate space usage
+            SELECT TABLE_NAME, ROUND((DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024) AS `Size (MB)`
+            FROM
+                information_schema.TABLES
+            WHERE
+                TABLE_name in ("redcap_log_view_requests", "redcap_log_view")
+    Ask Scott about summarizing performance data
+    add "(all sub-urls)" after general urls?!?
+    Why did last commits remove a bunch of rows, like /api?!?
+    Why does keep alive show up under general & specific
+    Make sure control center module pages are limited to admins
+    Finalize datatable
+    add option for time range
+    add filter for type (user/project/url/url w/o params)
+    add filter for api vs. non?
+    add note saying requests & time are counted twice between different types (user/project/specificUrl/generalUrl)
+        It is still useful to see different types side by side to determine top usage, but totals & percents will add up to more than 100% across types.
+    show quick lists of current tops w/ links to stats for each showing hourly usage
+        maybe not feasible
+            line chart w/ area underneath broken up by one category at a time?  Can then drill down into that category to break it down further by another category?
+    show to Rob to see if expanding to days would be useful
+    store & compare with history for previous days
+    link to project from pid?
+    order by sum(script_execution_time) desc
+    For each line, should we show +/- for last hour, last X hours, yesterday, last week, last month?
+    Before committing, move to another module, review/rename everything?
+    use a timed cron!  it will work just fine as-is in this case
+    limit to last 24 hours, in case period of saved stats ever changes
+    store daily via logs table?
+        $r = $module->queryLogs('
                 select usage_summary
                 order by timestamp
                 desc limit 1
             ', []);
- *      figure out size of summary, and clean up old logs after X time
- *      Could include module usage stats to show DB usage for settings, logs, etc.  Could find bad actors that add too many settings/logs, don't clean up old logs, etc.
- *      Could also include record stats records cache, maybe with "potential data points" by comparing to metadata table, w/ button to verify
- *      Could also include longest running and most often running (if busy every minute) crons
- *      Unit test this to make sure numbers are right?  I may have found an issue w/ the SQL queries, so errors are probably likely here as well
- *      summary table
- *          Can I use log table for this, so no need to create another table?!?
- *          date, user, project, url, url_without_params, is_api
- *          Would it be too much 
+    figure out size of summary, and clean up old logs after X time
+    Could include module usage stats to show DB usage for settings, logs, etc.  Could find bad actors that add too many settings/logs, don't clean up old logs, etc.
+    Could also include record stats records cache, maybe with "potential data points" by comparing to metadata table, w/ button to verify
+    Could also include longest running and most often running (if busy every minute) crons
+    Unit test this to make sure numbers are right?  I may have found an issue w/ the SQL queries, so errors are probably likely here as well
+    summary table
+        Can I use log table for this, so no need to create another table?!?
+        date, user, project, url, url_without_params, is_api
+        Would it be too much 
+    Remember
+        Store 3 days instead of 1?  Maybe not... 1 day already takes up 250 gigs!
  */
 
 const CPU_PERCENT_COLUMN_NAME = 'Percentage of Total CPU Time';
