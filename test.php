@@ -2,7 +2,7 @@
 
 /**
 TODO
-    uncommitted changes
+    move API to column?
     Fail more gracefully when nothing is over threshold
     Disable paging?
     Consider avoiding stats deletion for items in this query
