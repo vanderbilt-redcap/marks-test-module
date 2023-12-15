@@ -3,6 +3,7 @@
 /**
 TODO
     uncommitted changes
+    Fail more gracefully when nothing is over threshold
     Disable paging?
     Consider avoiding stats deletion for items in this query
         Query to figure out what percentage of rows would be left
@@ -58,6 +59,7 @@ const CPU_PERCENT_COLUMN_NAME = 'Percentage of Total CPU Time';
 $getTops = function() use ($module){
     $userColumnName = 'User';
     $projectColumnName = 'Project';
+    $moduleColumnName = 'Module';
     $specificURLColumnName = 'Specific URL';
     $generalURLColumnName = 'General URL';
 
@@ -83,12 +85,23 @@ $getTops = function() use ($module){
         $types = [
             $userColumnName,
             $projectColumnName,
+            $moduleColumnName,
             $specificURLColumnName,
             $generalURLColumnName,
         ];
 
         foreach($types as $type){
-            if($type === $generalURLColumnName){
+            if($type === $moduleColumnName){
+                $parts = explode('prefix=', $row[$specificURLColumnName]);
+                if(count($parts) === 1){
+                    // This is not a module specific request
+                    continue;
+                }
+
+                $prefix = explode('&', $parts[1])[0];
+                $identifier = $prefix;
+            }
+            else if($type === $generalURLColumnName){
                 $parts = explode('?', $row[$specificURLColumnName]);
                 if(count($parts) === 1){
                     // This URL doesn't have params, and will already be counted as a specific URL
