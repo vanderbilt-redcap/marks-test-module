@@ -2,7 +2,6 @@
 
 /**
 TODO
-    move API to column?
     Fail more gracefully when nothing is over threshold
     Disable paging?
     Consider avoiding stats deletion for items in this query
@@ -32,6 +31,8 @@ TODO
     link to project from pid?
     order by sum(script_execution_time) desc
     For each line, should we show +/- for last hour, last X hours, yesterday, last week, last month?
+    Include crons too (flight tracker uses a ton of CPU)?  They're not already included as requests are they?
+        I was considering moving API to column, but cron is a similar "type" option...should consider both
     Before committing, move to another module, review/rename everything?
     use a timed cron!  it will work just fine as-is in this case
     limit to last 24 hours, in case period of saved stats ever changes
