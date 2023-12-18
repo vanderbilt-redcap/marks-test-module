@@ -2,7 +2,6 @@
 
 /**
 TODO
-    Ask Scott about summarizing performance data
     add "(all sub-urls)" after general urls?!?
     Why did last commits remove a bunch of rows, like /api?!?
     Why does keep alive show up under general & specific
@@ -41,6 +40,7 @@ TODO
         Can I use log table for this, so no need to create another table?!?
         date, user, project, url, url_without_params, is_api
         Would it be too much 
+    Ask Scott about summarizing performance data
     Consider avoiding stats deletion for items in this query
         Query to figure out what percentage of rows would be left
         Multiple by percentage of table size to estimate space usage
