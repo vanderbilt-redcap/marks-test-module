@@ -101,6 +101,11 @@ $getTops = function() use ($module){
             }
             else{
                 $identifier = $row[$type];
+
+                if(empty($identifier) && in_array($type, [$userColumnName, $projectColumnName])){
+                    // Only count these lines for other identifiers
+                    continue;
+                }
             }
 
             $details = &$groups[$row['is_api']][$type][$identifier];
