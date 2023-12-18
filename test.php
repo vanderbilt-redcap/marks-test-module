@@ -4,8 +4,6 @@
 TODO
     Finalize datatable
     add option for time range
-    add filter for type (user/project/url/url w/o params)
-    add filter for api vs. non?
     add note saying requests & time are counted twice between different types (user/project/specificUrl/generalUrl)
         It is still useful to see different types side by side to determine top usage, but totals & percents will add up to more than 100% across types.
     show quick lists of current tops w/ links to stats for each showing hourly usage
@@ -17,7 +15,7 @@ TODO
     order by sum(script_execution_time) desc
     For each line, should we show +/- for last hour, last X hours, yesterday, last week, last month?
     Include crons too (flight tracker uses a ton of CPU)?  They're not already included as requests are they?
-        I was considering moving API to column, but cron is a similar "type" option...should consider both
+        Put "(cron) after "Project" type like API
     Before committing, move to another module, review/rename everything?
     use a timed cron!  it will work just fine as-is in this case
     limit to last 24 hours, in case period of saved stats ever changes
@@ -32,10 +30,6 @@ TODO
     Could also include record stats records cache, maybe with "potential data points" by comparing to metadata table, w/ button to verify
     Could also include longest running and most often running (if busy every minute) crons
     Unit test this to make sure numbers are right?  I may have found an issue w/ the SQL queries, so errors are probably likely here as well
-    summary table
-        Can I use log table for this, so no need to create another table?!?
-        date, user, project, url, url_without_params, is_api
-        Would it be too much 
     Ask Scott about summarizing performance data
     Consider avoiding stats deletion for items in this query
         Query to figure out what percentage of rows would be left
@@ -131,9 +125,8 @@ $getTops = function() use ($module){
                 $time = $details['time'];
                 $displayType = $type;
 
-                if(in_array($type, [$userColumnName, $projectColumnName])){
-                    $apiString = $isApi ? 'API' : 'non-API';
-                    $identifier = "$identifier ($apiString)";
+                if($isApi && in_array($type, [$userColumnName, $projectColumnName])){
+                    $displayType = "$displayType (API)";
                 }
                 else if(in_array($type, [$specificURLColumnName, $generalURLColumnName])){
                     $displayType = 'URL';
