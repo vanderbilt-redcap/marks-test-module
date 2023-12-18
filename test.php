@@ -2,10 +2,7 @@
 
 /**
 TODO
-    add "(all sub-urls)" after general urls?!?
-    Why did last commits remove a bunch of rows, like /api?!?
-    Why does keep alive show up under general & specific
-    Make sure control center module pages are limited to admins
+    remove module object
     Finalize datatable
     add option for time range
     add filter for type (user/project/url/url w/o params)
@@ -186,8 +183,18 @@ $module->initializeJavascriptModuleObject();
 <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js" integrity="sha512-BkpSL20WETFylMrcirBahHfSnY++H2O1W+UnEEO4yNIl+jI2+zowyoGJpbtk6bx97fBXf++WJHSSK2MV4ghPcg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <div id='datacore-customizations-module-container'>
-    <table width="100%"></table>
+    <table></table>
 </div>
+
+<style>
+    #datacore-customizations-module-container{
+        th:nth-child(2),
+        td:nth-child(2){
+            max-width: 400px;
+            overflow-wrap: break-word;
+        }
+    }
+</style>
 
 <script>
 (() => {
@@ -195,8 +202,8 @@ $module->initializeJavascriptModuleObject();
     const container = document.querySelector('#datacore-customizations-module-container')
 
     $(container.querySelector('table')).DataTable({
-        columns: <?=json_encode($columns)?>,
-        data: <?=json_encode($rows)?>,
+        columns: <?=json_encode($module->escape($columns))?>,
+        data: <?=json_encode($module->escape($rows))?>,
         order: [[<?=$sortColumn?>, 'desc']],
         paging: false,
     })
