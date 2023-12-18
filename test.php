@@ -2,7 +2,6 @@
 
 /**
 TODO
-    Finalize datatable
     add option for time range
     add note saying requests & time are counted twice between different types (user/project/specificUrl/generalUrl)
         It is still useful to see different types side by side to determine top usage, but totals & percents will add up to more than 100% across types.
@@ -39,6 +38,9 @@ TODO
                 information_schema.TABLES
             WHERE
                 TABLE_name in ("redcap_log_view_requests", "redcap_log_view")
+    Run by Rob
+        Add title header above table
+        Then move to REDCap core or its own module
     Remember
         Store 3 days instead of 1?  Maybe not... 1 day already takes up 250 gigs!
  */
