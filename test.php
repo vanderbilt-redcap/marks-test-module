@@ -179,6 +179,11 @@ foreach($tops as $top){
 
 <style>
     #datacore-customizations-module-container{
+        th:nth-child(1),
+        td:nth-child(1){
+            min-width: 60px;
+        }
+
         th:nth-child(2),
         td:nth-child(2){
             max-width: 400px;
