@@ -2,14 +2,6 @@
 
 /**
 TODO
-    Consider avoiding stats deletion for items in this query
-        Query to figure out what percentage of rows would be left
-        Multiple by percentage of table size to estimate space usage
-            SELECT TABLE_NAME, ROUND((DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024) AS `Size (MB)`
-            FROM
-                information_schema.TABLES
-            WHERE
-                TABLE_name in ("redcap_log_view_requests", "redcap_log_view")
     Ask Scott about summarizing performance data
     add "(all sub-urls)" after general urls?!?
     Why did last commits remove a bunch of rows, like /api?!?
@@ -49,6 +41,14 @@ TODO
         Can I use log table for this, so no need to create another table?!?
         date, user, project, url, url_without_params, is_api
         Would it be too much 
+    Consider avoiding stats deletion for items in this query
+        Query to figure out what percentage of rows would be left
+        Multiple by percentage of table size to estimate space usage
+            SELECT TABLE_NAME, ROUND((DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024) AS `Size (MB)`
+            FROM
+                information_schema.TABLES
+            WHERE
+                TABLE_name in ("redcap_log_view_requests", "redcap_log_view")
     Remember
         Store 3 days instead of 1?  Maybe not... 1 day already takes up 250 gigs!
  */
