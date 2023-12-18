@@ -183,6 +183,10 @@ foreach($tops as $top){
 </div>
 
 <style>
+    #pagecontainer{
+        max-width: 1500px;
+    }
+
     #datacore-customizations-module-container{
         th:nth-child(1),
         td:nth-child(1){
