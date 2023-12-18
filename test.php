@@ -2,7 +2,6 @@
 
 /**
 TODO
-    remove module object
     Finalize datatable
     add option for time range
     add filter for type (user/project/url/url w/o params)
@@ -177,7 +176,6 @@ foreach($tops as $top){
     $rows[] = array_values($top);
 }
 
-$module->initializeJavascriptModuleObject();
 ?>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js" integrity="sha512-BkpSL20WETFylMrcirBahHfSnY++H2O1W+UnEEO4yNIl+jI2+zowyoGJpbtk6bx97fBXf++WJHSSK2MV4ghPcg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -198,7 +196,6 @@ $module->initializeJavascriptModuleObject();
 
 <script>
 (() => {
-    const module = <?=$module->getJavascriptModuleObjectName()?>;
     const container = document.querySelector('#datacore-customizations-module-container')
 
     $(container.querySelector('table')).DataTable({
