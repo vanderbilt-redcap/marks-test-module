@@ -2,7 +2,6 @@
 
 /**
 TODO
-    Fail more gracefully when nothing is over threshold
     Disable paging?
     Consider avoiding stats deletion for items in this query
         Query to figure out what percentage of rows would be left
@@ -164,6 +163,9 @@ $getTops = function() use ($module){
 };
 
 $tops = $getTops();
+if(empty($tops)){
+    die('No usage found over minimum reporting threshold.');
+}
 
 $columns = [];
 foreach(array_keys($tops[0]) as $i=>$column){
