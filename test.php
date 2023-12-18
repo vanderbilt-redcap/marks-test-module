@@ -2,7 +2,6 @@
 
 /**
 TODO
-    Disable paging?
     Consider avoiding stats deletion for items in this query
         Query to figure out what percentage of rows would be left
         Multiple by percentage of table size to estimate space usage
@@ -199,6 +198,7 @@ $module->initializeJavascriptModuleObject();
         columns: <?=json_encode($columns)?>,
         data: <?=json_encode($rows)?>,
         order: [[<?=$sortColumn?>, 'desc']],
+        paging: false,
     })
 })()
 </script>
