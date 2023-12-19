@@ -60,12 +60,15 @@ $getTops = function() use ($module){
         select
             v.user as '$userColumnName',
             v.project_id as '$projectColumnName',
+            p.app_title,
             full_url as '$specificURLColumnName',
             page = 'api/index.php' as is_api,
             script_execution_time
         from redcap_log_view_requests r
         left join redcap_log_view v
             on v.log_view_id = r.log_view_id
+        left join redcap_projects p
+            on p.project_id = v.project_id
         where
             r.script_execution_time is not null
             and v.log_view_id is not null
@@ -109,6 +112,9 @@ $getTops = function() use ($module){
                 if(empty($identifier) && in_array($type, [$userColumnName, $projectColumnName])){
                     // Only count these lines for other identifiers
                     continue;
+                }
+                else if($type === $projectColumnName){
+                    $identifier = $row['app_title'] . " ($identifier)";
                 }
             }
 
@@ -203,14 +209,28 @@ foreach($tops as $top){
             overflow-wrap: break-word;
         }
     }
+
+    #datacore-customizations-module-container td a{
+        text-decoration: underline;
+    }
 </style>
 
 <script>
 (() => {
     const container = document.querySelector('#datacore-customizations-module-container')
+    const columns = <?=json_encode($module->escape($columns))?>;
+
+    columns[1].render = (data, type, row, meta) => {
+        if(row[0].startsWith('Project')){
+            const pid = data.split('(')[1].split(')')[0]
+            data = '<a target="_blank" href="<?=APP_PATH_WEBROOT?>' + 'index.php?pid=' + pid + '">' + data + '</a>'
+        }
+
+        return data
+    }
 
     $(container.querySelector('table')).DataTable({
-        columns: <?=json_encode($module->escape($columns))?>,
+        columns: columns,
         data: <?=json_encode($module->escape($rows))?>,
         order: [[<?=$sortColumn?>, 'desc']],
         paging: false,
