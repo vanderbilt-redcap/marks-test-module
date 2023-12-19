@@ -2,8 +2,10 @@
 
 /**
 TODO
-    Include crons too (flight tracker uses a ton of CPU)?  They're not already included as requests are they?
-        Put "(cron) after "Project" type like API
+    Change "request" wording to "call" to better account for crons
+    normalize numbers (add right padded zero, etc.)
+    Change Module to Module Page & expand column a little?
+    There are still two /api urls sometimes
     Come up w/ basic plan for more historical data (run by Rob before executing)
         Consider avoiding stats deletion for items in this query
         Query to figure out what percentage of rows would be left
@@ -26,6 +28,7 @@ TODO
     add option for time range
         see stash
     need to account for start & end times, and split execution time up depending on date range
+    add support for requests & crons (especially) in-transit?
     Add title header above table
     add note saying requests & time are counted twice between different types (user/project/specificUrl/generalUrl)
         It is still useful to see different types side by side to determine top usage, but totals & percents will add up to more than 100% across types.
@@ -124,7 +127,48 @@ $getTops = function() use ($module){
         $totals['requests']++;
         $totals['time'] += $row['script_execution_time'];
     }
-    
+
+    $result = $module->query('
+        select
+            cron_name,
+            directory_prefix,
+            timestampdiff(second, cron_run_start, cron_run_end) as duration
+        from redcap_crons_history h
+        join redcap_crons c
+            on c.cron_id = h.cron_id
+        left join redcap_external_modules m
+            on m.external_module_id = c.external_module_id
+        where
+            cron_run_end is not null
+            and
+            (
+                (
+                    cron_run_start > DATE_SUB(now(), interval 1 hour)
+                    and
+                    cron_run_start < now()
+                )
+                or
+                (
+                    cron_run_end > DATE_SUB(now(), interval 1 hour)
+                    and
+                    cron_run_end < now()
+                )
+            )
+    ', []);
+
+    while($row = $result->fetch_assoc()){
+        $cronName = $row['cron_name'];
+        $prefix = $row['directory_prefix'] ?? 'REDCap';
+        $identifier = "$prefix.$cronName";
+
+        $details = &$groups[false]['Cron'][$identifier];
+        $details['requests']++;
+        $details['time'] += $row['duration'];
+
+        $totals['requests']++;
+        $totals['time'] += $row['duration'];
+    }
+
     $threshold = $totals['time']/100;
     $tops = [];
     foreach($groups as $isApi=>$types){
@@ -159,7 +203,7 @@ $getTops = function() use ($module){
             }
         }
     }
-    
+
     return $tops;
 };
 
