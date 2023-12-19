@@ -5,13 +5,9 @@ TODO
     add option for time range
         see stash
     need to account for start & end times, and split execution time up depending on date range
-    add note saying requests & time are counted twice between different types (user/project/specificUrl/generalUrl)
-        It is still useful to see different types side by side to determine top usage, but totals & percents will add up to more than 100% across types.
     show quick lists of current tops w/ links to stats for each showing hourly usage
         maybe not feasible
             line chart w/ area underneath broken up by one category at a time?  Can then drill down into that category to break it down further by another category?
-    show to Rob to see if expanding to days would be useful
-    store & compare with history for previous days
     link to project from pid?
     order by sum(script_execution_time) desc
     For each line, should we show +/- for last hour, last X hours, yesterday, last week, last month?
@@ -40,9 +36,13 @@ TODO
                 information_schema.TABLES
             WHERE
                 TABLE_name in ("redcap_log_view_requests", "redcap_log_view")
+    Come up w/ basic plan for more historical data (run by Rob before executing)
+        store & compare with history for previous days?
     Run by Rob
-        Add title header above table
-        Then move to REDCap core or its own module
+    Add title header above table
+    add note saying requests & time are counted twice between different types (user/project/specificUrl/generalUrl)
+        It is still useful to see different types side by side to determine top usage, but totals & percents will add up to more than 100% across types.
+    Then move to REDCap core or its own module
     Remember
         Store 3 days instead of 1?  Maybe not... 1 day already takes up 250 gigs!
  */
