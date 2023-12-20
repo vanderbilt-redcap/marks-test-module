@@ -33,6 +33,7 @@ TODO
     Add title header above table
     add note saying requests & time are counted twice between different types (user/project/specificUrl/generalUrl)
         It is still useful to see different types side by side to determine top usage, but totals & percents will add up to more than 100% across types.
+    add tool tip saying percentages are not exact (not accounting for some requests, see at VUMC Splunk for stats on all requests)
     Review all lines, rename any language
     Move to REDCap core or its own module
     if/when we want a more advanced interface
@@ -49,7 +50,7 @@ TODO
             Could also include record stats records cache, maybe with "potential data points" by comparing to metadata table, w/ button to verify
  */
 
-const CPU_PERCENT_COLUMN_NAME = 'Percentage of Total CPU Time';
+const CPU_PERCENT_COLUMN_NAME = 'Percent of Total CPU Time';
 
 $getTops = function() use ($module){
     $userColumnName = 'User';
@@ -195,11 +196,11 @@ $getTops = function() use ($module){
                 $tops[] = [
                     'Type' => $displayType,
                     'Identifier' => $identifier,
-                    'CPU Time (hours)' => round($time/60/60, 2),
-                    CPU_PERCENT_COLUMN_NAME => round($time/$totals['time']*100, 3),
+                    'CPU Time (hours)' => round($time/60/60, 1),
+                    CPU_PERCENT_COLUMN_NAME => round($time/$totals['time']*100, 1) . '%',
                     'Request Count' => $requests,
-                    'Percentage of All Requests' => round($requests/$totals['requests']*100, 3),
-                    'Average Seconds Per Request' => round($time/$requests, 3),
+                    'Percent of Total Requests' => round($requests/$totals['requests']*100, 1) . '%',
+                    'Average Seconds Per Request' => round($time/$requests, 1),
                 ];
             }
         }
@@ -241,15 +242,24 @@ foreach($tops as $top){
     }
 
     #datacore-customizations-module-container{
-        th:nth-child(1),
+        th{
+            padding-right: 15px;
+            max-width: 55px;
+        }
+        
         td:nth-child(1){
-            min-width: 60px;
+            white-space: nowrap;
         }
 
         th:nth-child(2),
         td:nth-child(2){
-            max-width: 400px;
+            max-width: 375px;
             overflow-wrap: break-word;
+        }
+
+        td:nth-child(n+3){
+            text-align: right;
+            padding-right: 28px;
         }
     }
 
