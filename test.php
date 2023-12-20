@@ -238,7 +238,7 @@ foreach($tops as $top){
 
 <style>
     #pagecontainer{
-        max-width: 1500px;
+        max-width: 1350px;
     }
 
     #datacore-customizations-module-container{
