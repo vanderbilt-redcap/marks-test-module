@@ -2,11 +2,7 @@
 
 /**
 TODO
-    add loading indicator on date change
-    use number_format on call count
-    change "." in module cron name to " - "?
     add setting for threshold
-    Clarify general ("Page"?) vs. specific ("Full"?) URLs (as long as "Module Page"?)
     Rename "User (API)" to "API User"? same for project?
     need to account for start & end times, and split execution time up depending on date range
     add support for requests & crons (especially) in-transit?
@@ -76,8 +72,8 @@ $getTops = function() use ($module, $startTime, $endTime){
     $userColumnName = 'User';
     $projectColumnName = 'Project';
     $moduleColumnName = 'Module Page';
-    $specificURLColumnName = 'Specific URL';
-    $generalURLColumnName = 'General URL';
+    $specificURLColumnName = 'URL';
+    $generalURLColumnName = 'Page';
 
     $result = $module->query("
         select
@@ -145,14 +141,22 @@ $getTops = function() use ($module, $startTime, $endTime){
                 $prefix = explode('&', $parts[1])[0];
                 $identifier = $prefix;
             }
-            else if($type === $generalURLColumnName){
-                $parts = explode('?', $row[$specificURLColumnName]);
-                if(count($parts) === 1){
-                    // This URL doesn't have params, and will already be counted as a specific URL
+            else if(in_array($type, [$specificURLColumnName, $generalURLColumnName])){
+                $identifier = $row[$specificURLColumnName];
+                $identifier = str_replace(APP_PATH_WEBROOT_FULL, '/', $identifier);
+                $identifier = str_replace(APP_PATH_WEBROOT, '/', $identifier);
+
+                $parts = explode('?', $identifier);
+                if($type === $generalURLColumnName){
+                    $identifier = $parts[0];
+                }
+                else if(count($parts) === 1){
+                    /**
+                     * This URL doesn't have params, and will already be counted as a general URL.
+                     * It's confusing to count it again as a specific URL, so skip it.
+                     */
                     continue;
                 }
-
-                $identifier = $parts[0];
             }
             else{
                 $identifier = $row[$type];
@@ -218,7 +222,7 @@ $getTops = function() use ($module, $startTime, $endTime){
     while($row = $result->fetch_assoc()){
         $cronName = $row['cron_name'];
         $prefix = $row['directory_prefix'] ?? 'REDCap';
-        $identifier = "$prefix.$cronName";
+        $identifier = "$prefix - $cronName";
 
         $details = &$groups[false]['Cron'][$identifier];
         $details['calls']++;
@@ -244,18 +248,13 @@ $getTops = function() use ($module, $startTime, $endTime){
                 if($isApi && in_array($type, [$userColumnName, $projectColumnName])){
                     $displayType = "$displayType (API)";
                 }
-                else if(in_array($type, [$specificURLColumnName, $generalURLColumnName])){
-                    $displayType = 'URL';
-                    $identifier = str_replace(APP_PATH_WEBROOT_FULL, '/', $identifier);
-                    $identifier = str_replace(APP_PATH_WEBROOT, '/', $identifier);
-                }
 
                 $tops[] = [
                     'Type' => $displayType,
                     'Identifier' => $identifier,
                     'CPU Time (hours)' => number_format($time/60/60, 1),
                     CPU_PERCENT_COLUMN_NAME => number_format($time/$totals['time']*100, 1) . '%',
-                    'Call Count' => $calls,
+                    'Call Count' => number_format($calls),
                     'Percent of Total Calls' => number_format($calls/$totals['calls']*100, 1) . '%',
                     'Average Seconds Per Call' => number_format($time/$calls, 1),
                 ];
