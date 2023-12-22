@@ -194,11 +194,11 @@ $getTops = function() use ($module){
                 $tops[] = [
                     'Type' => $displayType,
                     'Identifier' => $identifier,
-                    'CPU Time (hours)' => round($time/60/60, 1),
-                    CPU_PERCENT_COLUMN_NAME => round($time/$totals['time']*100, 1) . '%',
+                    'CPU Time (hours)' => number_format($time/60/60, 1),
+                    CPU_PERCENT_COLUMN_NAME => number_format($time/$totals['time']*100, 1) . '%',
                     'Call Count' => $calls,
-                    'Percent of Total Calls' => round($calls/$totals['calls']*100, 1) . '%',
-                    'Average Seconds Per Call' => round($time/$calls, 1),
+                    'Percent of Total Calls' => number_format($calls/$totals['calls']*100, 1) . '%',
+                    'Average Seconds Per Call' => number_format($time/$calls, 1),
                 ];
             }
         }
