@@ -2,6 +2,14 @@
 
 /**
 TODO
+    add option for time range
+        see stash
+    need to account for start & end times, and split execution time up depending on date range
+    add support for requests & crons (especially) in-transit?
+    Add title header above table
+    add note saying requests & time are counted twice between different types (user/project/specificUrl/generalUrl)
+        It is still useful to see different types side by side to determine top usage, but totals & percents will add up to more than 100% across types.
+    add tool tip saying percentages are not exact (not accounting for some requests, see at VUMC Splunk for stats on all requests)
     There are still two /api urls sometimes
     Come up w/ basic plan for more historical data (run by Rob before executing)
         Consider avoiding stats deletion for items in this query
@@ -22,14 +30,6 @@ TODO
         figure out size of summary, and clean up old logs after X time
         Ask Scott about summarizing performance data
     Run by Rob
-    add option for time range
-        see stash
-    need to account for start & end times, and split execution time up depending on date range
-    add support for requests & crons (especially) in-transit?
-    Add title header above table
-    add note saying requests & time are counted twice between different types (user/project/specificUrl/generalUrl)
-        It is still useful to see different types side by side to determine top usage, but totals & percents will add up to more than 100% across types.
-    add tool tip saying percentages are not exact (not accounting for some requests, see at VUMC Splunk for stats on all requests)
     Review all lines, rename any language
     Move to REDCap core or its own module
     if/when we want a more advanced interface
