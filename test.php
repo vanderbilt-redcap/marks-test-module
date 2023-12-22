@@ -2,8 +2,12 @@
 
 /**
 TODO
-    add option for time range
-        see stash
+    add loading indicator on date change
+    use number_format on call count
+    change "." in module cron name to " - "?
+    add setting for threshold
+    Clarify general ("Page"?) vs. specific ("Full"?) URLs (as long as "Module Page"?)
+    Rename "User (API)" to "API User"? same for project?
     need to account for start & end times, and split execution time up depending on date range
     add support for requests & crons (especially) in-transit?
     Add title header above table
@@ -32,6 +36,7 @@ TODO
     Run by Rob
     Review all lines, rename any language
     Move to REDCap core or its own module
+    Unit test the queries?  The may still be inaccurate!
     if/when we want a more advanced interface
         show quick lists of current tops w/ links to stats for each showing hourly usage
             maybe not feasible
@@ -48,7 +53,22 @@ TODO
 
 const CPU_PERCENT_COLUMN_NAME = 'Percent of Total CPU Time';
 
-$getTops = function() use ($module){
+$startTime = htmlspecialchars($_GET['start-time'], ENT_QUOTES);
+$endTime = htmlspecialchars($_GET['end-time'], ENT_QUOTES);
+
+if(empty($startTime) || empty($endTime)){
+    $now = time();
+    $oneHour = 60*60;
+    $oneHourAgo = $now - $oneHour;
+    $format = 'Y-m-d\\TH:i';
+    $startTime = date($format, $oneHourAgo);
+    $endTime = date($format, $now);
+}
+
+$getTops = function() use ($module, $startTime, $endTime){
+    $module->query('set @start = ?', $startTime);
+    $module->query('set @end = ?', $endTime);
+
     $userColumnName = 'User';
     $projectColumnName = 'Project';
     $moduleColumnName = 'Module Page';
@@ -62,7 +82,19 @@ $getTops = function() use ($module){
             p.app_title,
             full_url as '$specificURLColumnName',
             page = 'api/index.php' as is_api,
-            script_execution_time
+            timestampdiff(
+                second,
+                if(
+                    ts > @start,
+                    ts,
+                    @start
+                ),
+                if(
+                    date_add(ts, interval script_execution_time second) < @end,
+                    date_add(ts, interval script_execution_time second),
+                    @end
+                )
+            ) as duration
         from redcap_log_view_requests r
         left join redcap_log_view v
             on v.log_view_id = r.log_view_id
@@ -71,7 +103,20 @@ $getTops = function() use ($module){
         where
             r.script_execution_time is not null
             and v.log_view_id is not null
-            and ts > DATE_SUB(now(), interval 1 hour)
+            and
+            (
+                (
+                    ts >= @start
+                    and
+                    ts < @end
+                )
+                or
+                (
+                    date_add(ts, interval script_execution_time second) > @start
+                    and
+                    date_add(ts, interval script_execution_time second) <= @end
+                )
+            )
     ", []);
     
     $groups = [];
@@ -119,18 +164,30 @@ $getTops = function() use ($module){
 
             $details = &$groups[$row['is_api']][$type][$identifier];
             $details['calls']++;
-            $details['time'] += $row['script_execution_time'];
+            $details['time'] += $row['duration'];
         }
 
         $totals['calls']++;
-        $totals['time'] += $row['script_execution_time'];
+        $totals['time'] += $row['duration'];
     }
 
     $result = $module->query('
         select
             cron_name,
             directory_prefix,
-            timestampdiff(second, cron_run_start, cron_run_end) as duration
+            timestampdiff(
+                second,
+                if(
+                    cron_run_start > @start,
+                    cron_run_start,
+                    @start
+                ),
+                if(
+                    cron_run_end < @end,
+                    cron_run_end,
+                    @end
+                )
+            ) as duration
         from redcap_crons_history h
         join redcap_crons c
             on c.cron_id = h.cron_id
@@ -141,15 +198,15 @@ $getTops = function() use ($module){
             and
             (
                 (
-                    cron_run_start > DATE_SUB(now(), interval 1 hour)
+                    cron_run_start >= @start
                     and
-                    cron_run_start < now()
+                    cron_run_start < @end
                 )
                 or
                 (
-                    cron_run_end > DATE_SUB(now(), interval 1 hour)
+                    cron_run_end > @start
                     and
-                    cron_run_end < now()
+                    cron_run_end <= @end
                 )
             )
     ', []);
@@ -232,12 +289,30 @@ foreach($tops as $top){
 <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js" integrity="sha512-BkpSL20WETFylMrcirBahHfSnY++H2O1W+UnEEO4yNIl+jI2+zowyoGJpbtk6bx97fBXf++WJHSSK2MV4ghPcg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <div id='datacore-customizations-module-container'>
+    <div class='controls'>
+        <label>Start Time:</label><input name='start-time' type='datetime-local' value='<?=$startTime?>'><br>
+        <label>End Time:</label><input name='end-time' type='datetime-local' value='<?=$endTime?>'><br>
+    </div>
     <table></table>
 </div>
 
 <style>
     #pagecontainer{
         max-width: 1350px;
+    }
+
+    .dataTables_wrapper .dataTables_filter{
+        float: none;
+        text-align: left;
+
+        label{
+            display: inline-block;
+            min-width: 75px;
+        }
+
+        input{
+            min-width: 200px;
+        }
     }
 
     #datacore-customizations-module-container{
@@ -286,6 +361,19 @@ foreach($tops as $top){
         data: <?=json_encode($module->escape($rows))?>,
         order: [[<?=$sortColumn?>, 'desc']],
         paging: false,
+    })
+
+    const filter = container.querySelector('.dataTables_filter')
+    const controls = container.querySelector('.controls')
+    filter.prepend(controls)
+    filter.append(filter.querySelector('input[type=search]'))
+
+    controls.querySelectorAll('input').forEach((input) => {
+        input.addEventListener('change', (event) => {
+            const params = new URLSearchParams(location.search)
+            params.set(input.name, input.value)
+            location.search = params
+        })
     })
 })()
 </script>
