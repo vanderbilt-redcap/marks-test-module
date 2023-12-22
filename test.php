@@ -2,8 +2,6 @@
 
 /**
 TODO
-    normalize numbers (add right padded zero, etc.)
-    Change Module to Module Page & expand column a little?
     There are still two /api urls sometimes
     Come up w/ basic plan for more historical data (run by Rob before executing)
         Consider avoiding stats deletion for items in this query
@@ -53,7 +51,7 @@ const CPU_PERCENT_COLUMN_NAME = 'Percent of Total CPU Time';
 $getTops = function() use ($module){
     $userColumnName = 'User';
     $projectColumnName = 'Project';
-    $moduleColumnName = 'Module';
+    $moduleColumnName = 'Module Page';
     $specificURLColumnName = 'Specific URL';
     $generalURLColumnName = 'General URL';
 
