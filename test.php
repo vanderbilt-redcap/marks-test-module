@@ -3,7 +3,6 @@
 /**
 TODO
     add setting for threshold
-    need to account for start & end times, and split execution time up depending on date range
     add support for requests & crons (especially) in-transit?
     Add title header above table
     add note saying requests & time are counted twice between different types (user/project/specificUrl/generalUrl)
@@ -291,6 +290,7 @@ foreach($tops as $top){
     <div class='controls'>
         <label>Start Time:</label><input name='start-time' type='datetime-local' value='<?=$startTime?>'><br>
         <label>End Time:</label><input name='end-time' type='datetime-local' value='<?=$endTime?>'><br>
+        <button>Apply</button>
     </div>
     <table></table>
 </div>
@@ -300,10 +300,10 @@ foreach($tops as $top){
         max-width: 1350px;
     }
 
-    .dataTables_wrapper .dataTables_filter{
-        float: none;
-        text-align: left;
-        margin-bottom: 10px;
+    #datacore-customizations-module-container .controls{
+        position: relative;
+        z-index: 10;
+        margin-bottom: -20px;
 
         label{
             display: inline-block;
@@ -372,19 +372,20 @@ foreach($tops as $top){
         },
     })
 
-    const filter = container.querySelector('.dataTables_filter')
     const controls = container.querySelector('.controls')
-    filter.prepend(controls)
-    filter.append(filter.querySelector('input[type=search]'))
+    controls.querySelector('button').onclick = () => {
+        showProgress(true)
+        const params = new URLSearchParams(location.search)
 
-    controls.querySelectorAll('input').forEach((input) => {
-        input.addEventListener('change', (event) => {
-            showProgress(true)
+        controls.querySelectorAll('input').forEach((input) => {
+            if(!input.name){
+                return
+            }
 
-            const params = new URLSearchParams(location.search)
             params.set(input.name, input.value)
-            location.search = params
         })
-    })
+
+        location.search = params
+    }
 })()
 </script>
