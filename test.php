@@ -265,11 +265,8 @@ $getTops = function() use ($module, $startTime, $endTime){
 };
 
 $tops = $getTops();
-if(empty($tops)){
-    die('No usage found over minimum reporting threshold.');
-}
-
 $columns = [];
+$sortColumn = 0;
 foreach(array_keys($tops[0]) as $i=>$column){
     $columns[] = [
         'title' => $column,
@@ -306,6 +303,7 @@ foreach($tops as $top){
     .dataTables_wrapper .dataTables_filter{
         float: none;
         text-align: left;
+        margin-bottom: 10px;
 
         label{
             display: inline-block;
@@ -347,15 +345,21 @@ foreach($tops as $top){
 <script>
 (() => {
     const container = document.querySelector('#datacore-customizations-module-container')
+
     const columns = <?=json_encode($module->escape($columns))?>;
+    if(columns.length === 0){
+        // At least one column is required for the table to render
+        columns.push({})
+    }
+    else{
+        columns[1].render = (data, type, row, meta) => {
+            if(row[0].startsWith('Project')){
+                const pid = data.split('(')[1].split(')')[0]
+                data = '<a target="_blank" href="<?=APP_PATH_WEBROOT?>' + 'index.php?pid=' + pid + '">' + data + '</a>'
+            }
 
-    columns[1].render = (data, type, row, meta) => {
-        if(row[0].startsWith('Project')){
-            const pid = data.split('(')[1].split(')')[0]
-            data = '<a target="_blank" href="<?=APP_PATH_WEBROOT?>' + 'index.php?pid=' + pid + '">' + data + '</a>'
+            return data
         }
-
-        return data
     }
 
     $(container.querySelector('table')).DataTable({
@@ -363,6 +367,9 @@ foreach($tops as $top){
         data: <?=json_encode($module->escape($rows))?>,
         order: [[<?=$sortColumn?>, 'desc']],
         paging: false,
+        language: {
+            emptyTable: 'No calls found over minimum reporting threshold.',
+        },
     })
 
     const filter = container.querySelector('.dataTables_filter')
