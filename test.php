@@ -56,12 +56,16 @@ const CPU_PERCENT_COLUMN_NAME = 'Percent of Total CPU Time';
 $startTime = htmlspecialchars($_GET['start-time'], ENT_QUOTES);
 $endTime = htmlspecialchars($_GET['end-time'], ENT_QUOTES);
 
-if(empty($startTime) || empty($endTime)){
-    $now = time();
-    $oneHour = 60*60;
-    $oneHourAgo = $now - $oneHour;
-    $format = 'Y-m-d\\TH:i';
+$now = time();
+$oneHour = 60*60;
+$oneHourAgo = $now - $oneHour;
+$format = 'Y-m-d\\TH:i';
+
+if(empty($startTime)){
     $startTime = date($format, $oneHourAgo);
+}
+
+if(empty($endTime)){
     $endTime = date($format, $now);
 }
 
@@ -370,6 +374,8 @@ foreach($tops as $top){
 
     controls.querySelectorAll('input').forEach((input) => {
         input.addEventListener('change', (event) => {
+            showProgress(true)
+
             const params = new URLSearchParams(location.search)
             params.set(input.name, input.value)
             location.search = params
