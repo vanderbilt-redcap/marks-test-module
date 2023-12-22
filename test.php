@@ -2,8 +2,6 @@
 
 /**
 TODO
-    make sure cron numbers are accurate
-    Change "request" wording to "call" to better account for crons
     normalize numbers (add right padded zero, etc.)
     Change Module to Module Page & expand column a little?
     There are still two /api urls sometimes
@@ -122,11 +120,11 @@ $getTops = function() use ($module){
             }
 
             $details = &$groups[$row['is_api']][$type][$identifier];
-            $details['requests']++;
+            $details['calls']++;
             $details['time'] += $row['script_execution_time'];
         }
 
-        $totals['requests']++;
+        $totals['calls']++;
         $totals['time'] += $row['script_execution_time'];
     }
 
@@ -164,10 +162,10 @@ $getTops = function() use ($module){
         $identifier = "$prefix.$cronName";
 
         $details = &$groups[false]['Cron'][$identifier];
-        $details['requests']++;
+        $details['calls']++;
         $details['time'] += $row['duration'];
 
-        $totals['requests']++;
+        $totals['calls']++;
         $totals['time'] += $row['duration'];
     }
 
@@ -180,7 +178,7 @@ $getTops = function() use ($module){
                     continue;
                 }
 
-                $requests = $details['requests'];
+                $calls = $details['calls'];
                 $time = $details['time'];
                 $displayType = $type;
 
@@ -198,9 +196,9 @@ $getTops = function() use ($module){
                     'Identifier' => $identifier,
                     'CPU Time (hours)' => round($time/60/60, 1),
                     CPU_PERCENT_COLUMN_NAME => round($time/$totals['time']*100, 1) . '%',
-                    'Request Count' => $requests,
-                    'Percent of Total Requests' => round($requests/$totals['requests']*100, 1) . '%',
-                    'Average Seconds Per Request' => round($time/$requests, 1),
+                    'Call Count' => $calls,
+                    'Percent of Total Calls' => round($calls/$totals['calls']*100, 1) . '%',
+                    'Average Seconds Per Call' => round($time/$calls, 1),
                 ];
             }
         }
