@@ -216,7 +216,10 @@ if(empty($tops)){
 
 $columns = [];
 foreach(array_keys($tops[0]) as $i=>$column){
-    $columns[] = ['title' => $column];
+    $columns[] = [
+        'title' => $column,
+        'orderSequence' => ['desc', 'asc'],
+    ];
 
     if($column === CPU_PERCENT_COLUMN_NAME){
         $sortColumn = $i;
