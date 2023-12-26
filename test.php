@@ -2,7 +2,6 @@
 
 /**
 TODO
-    add checkbox for requests in-transit
     div by zero error when $totals['time'] is empty/0
     move complex time calcs from SQL to PHP
     Add title header above table
@@ -57,9 +56,12 @@ $format = 'Y-m-d\\TH:i';
 
 $startTime = htmlspecialchars($_GET['start-time'] ?? date($format, $oneHourAgo), ENT_QUOTES);
 $endTime = htmlspecialchars($_GET['end-time'] ?? date($format, $now), ENT_QUOTES);
+$includeIncompleteHttpRequests = isset($_GET['include-incomplete-http-requests']);
 $threshold = htmlspecialchars($_GET['threshold'] ?? 1, ENT_QUOTES);
 
-$getTops = function() use ($module, $startTime, $endTime, $threshold){
+$getTops = function() use ($module, $startTime, $endTime, $threshold, $includeIncompleteHttpRequests){
+    $excludeIncompleteHttpRequestsClause = $includeIncompleteHttpRequests ? '' : 'and r.script_execution_time is not null';
+
     $module->query('set @start = ?', $startTime);
     $module->query('set @end = ?', $endTime);
 
@@ -114,8 +116,8 @@ $getTops = function() use ($module, $startTime, $endTime, $threshold){
             left join redcap_log_view v
                 on v.log_view_id = r.log_view_id
             where
-                r.script_execution_time is not null
-                and r.log_view_id is not null
+                r.log_view_id is not null
+                $excludeIncompleteHttpRequestsClause
         ) r
         left join redcap_projects p
             on p.project_id = r.project_id
@@ -308,6 +310,10 @@ foreach($tops as $top){
     <div class='controls'>
         <label>Start Time:</label><input name='start-time' type='datetime-local' value='<?=$startTime?>'><br>
         <label>End Time:</label><input name='end-time' type='datetime-local' value='<?=$endTime?>'><br>
+        <input name='include-incomplete-http-requests' type='checkbox' <?php if($includeIncompleteHttpRequests) echo 'checked'?>><label>Include incomplete HTTP requests</label>
+        <a href="javascript:;" class="help" onclick="
+            simpleDialog('This includes both requests that are still running AND requests that completed but did not store a script_execution_time (skewing results).  We might be able to store script_execution_time in more scenarios in order to accurately measure HTTP requests that are still running.  Currently running crons are always included regardless of this setting.');
+        ">?</a><br>
         Display calls using at least <input name='threshold' value='<?=$threshold?>' style='width: 26px; text-align: right'>% of total CPU time
         <a href="javascript:;" class="help" onclick="
             simpleDialog('CPU time is often a reasonable proxy for DB load. The only known significant exceptions are Flight Tracker crons (which use sleep calls).');
@@ -331,6 +337,11 @@ foreach($tops as $top){
         label{
             display: inline-block;
             min-width: 75px;
+        }
+
+        input[type=checkbox]{
+            margin-right: 5px;
+            vertical-align: -2px;
         }
     }
 
@@ -397,11 +408,20 @@ foreach($tops as $top){
         const params = new URLSearchParams(location.search)
 
         controls.querySelectorAll('input').forEach((input) => {
-            if(!input.name){
-                return
+            if(
+                !input.name
+                ||
+                (
+                    input.type === 'checkbox'
+                    &&
+                    !input.checked
+                )
+            ){
+                params.delete(input.name)
             }
-
-            params.set(input.name, input.value)
+            else{
+                params.set(input.name, input.value)
+            }
         })
 
         location.search = params
