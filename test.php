@@ -239,7 +239,7 @@ $getTops = function() use ($module, $startTime, $endTime, $threshold){
                 $displayType = $type;
 
                 if($isApi && in_array($type, [$userColumnName, $projectColumnName])){
-                    $displayType = "$displayType (API)";
+                    $displayType = "API ($displayType)";
                 }
 
                 $tops[] = [
