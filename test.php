@@ -2,7 +2,7 @@
 
 /**
 TODO
-    move "API" before user/project
+    move complex time calcs from SQL to PHP
     add support for requests & crons (especially) in-transit?
     Add title header above table
     add note saying requests & time are counted twice between different types (user/project/specificUrl/generalUrl)
@@ -62,6 +62,14 @@ $getTops = function() use ($module, $startTime, $endTime, $threshold){
     $module->query('set @start = ?', $startTime);
     $module->query('set @end = ?', $endTime);
 
+    $groups = [];
+    $totals = [];
+
+    $countCall = function($row, &$typeDetails){
+        $typeDetails['calls']++;
+        $typeDetails['time'] += $row['duration'];
+    };
+
     $userColumnName = 'User';
     $projectColumnName = 'Project';
     $moduleColumnName = 'Module Page';
@@ -111,9 +119,7 @@ $getTops = function() use ($module, $startTime, $endTime, $threshold){
                 )
             )
     ", []);
-    
-    $groups = [];
-    $totals = [];
+
     while($row = $result->fetch_assoc()){
         $types = [
             $userColumnName,
@@ -163,13 +169,10 @@ $getTops = function() use ($module, $startTime, $endTime, $threshold){
                 }
             }
 
-            $details = &$groups[$row['is_api']][$type][$identifier];
-            $details['calls']++;
-            $details['time'] += $row['duration'];
+            $countCall($row, $groups[$row['is_api']][$type][$identifier]);
         }
 
-        $totals['calls']++;
-        $totals['time'] += $row['duration'];
+        $countCall($row, $totals);
     }
 
     $result = $module->query('
