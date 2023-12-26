@@ -2,8 +2,9 @@
 
 /**
 TODO
+    add checkbox for requests in-transit
+    div by zero error when $totals['time'] is empty/0
     move complex time calcs from SQL to PHP
-    add support for requests & crons (especially) in-transit?
     Add title header above table
     add note saying requests & time are counted twice between different types (user/project/specificUrl/generalUrl)
         It is still useful to see different types side by side to determine top usage, but totals & percents will add up to more than 100% across types.
@@ -78,8 +79,8 @@ $getTops = function() use ($module, $startTime, $endTime, $threshold){
 
     $result = $module->query("
         select
-            v.user as '$userColumnName',
-            v.project_id as '$projectColumnName',
+            user as '$userColumnName',
+            p.project_id as '$projectColumnName',
             p.app_title,
             full_url as '$specificURLColumnName',
             page = 'api/index.php' as is_api,
@@ -96,15 +97,29 @@ $getTops = function() use ($module, $startTime, $endTime, $threshold){
                     @end
                 )
             ) as duration
-        from redcap_log_view_requests r
-        left join redcap_log_view v
-            on v.log_view_id = r.log_view_id
+        from (
+            select
+                r.log_view_id,
+                ts,
+                user,
+                project_id,
+                full_url,
+                page,
+                if(
+                    script_execution_time,
+                    script_execution_time,
+                    timestampdiff(second, ts, now())
+                ) as script_execution_time
+            from redcap_log_view_requests r
+            left join redcap_log_view v
+                on v.log_view_id = r.log_view_id
+            where
+                r.script_execution_time is not null
+                and r.log_view_id is not null
+        ) r
         left join redcap_projects p
-            on p.project_id = v.project_id
+            on p.project_id = r.project_id
         where
-            r.script_execution_time is not null
-            and v.log_view_id is not null
-            and
             (
                 (
                     ts >= @start
@@ -192,14 +207,22 @@ $getTops = function() use ($module, $startTime, $endTime, $threshold){
                     @end
                 )
             ) as duration
-        from redcap_crons_history h
+        from (
+            select
+                cron_id,
+                cron_run_start,
+                if(
+                    cron_run_end,
+                    cron_run_end,
+                    now()
+                ) as cron_run_end
+            from redcap_crons_history h
+        ) h
         join redcap_crons c
             on c.cron_id = h.cron_id
         left join redcap_external_modules m
             on m.external_module_id = c.external_module_id
         where
-            cron_run_end is not null
-            and
             (
                 (
                     cron_run_start >= @start
