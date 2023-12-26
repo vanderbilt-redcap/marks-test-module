@@ -221,11 +221,8 @@ $getTops = function() use ($module, $startTime, $endTime, $threshold){
         $identifier = "$prefix - $cronName";
 
         $details = &$groups[false]['Cron'][$identifier];
-        $details['calls']++;
-        $details['time'] += $row['duration'];
-
-        $totals['calls']++;
-        $totals['time'] += $row['duration'];
+        $countCall($row, $details);
+        $countCall($row, $totals);
     }
 
     $thresholdTime = $totals['time'] * $threshold/100;
