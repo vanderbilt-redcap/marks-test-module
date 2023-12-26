@@ -2,7 +2,7 @@
 
 /**
 TODO
-    add setting for threshold
+    move "API" before user/project
     add support for requests & crons (especially) in-transit?
     Add title header above table
     add note saying requests & time are counted twice between different types (user/project/specificUrl/generalUrl)
@@ -28,6 +28,7 @@ TODO
         figure out size of summary, and clean up old logs after X time
         Ask Scott about summarizing performance data
     Run by Rob
+    Prevent user from entering time range spanning cutoff where request traffic is deleted, but cron history remains
     Review all lines, rename any language
     Move to REDCap core or its own module
     Unit test the queries?  The may still be inaccurate!
@@ -47,23 +48,17 @@ TODO
 
 const CPU_PERCENT_COLUMN_NAME = 'Percent of Total CPU Time';
 
-$startTime = htmlspecialchars($_GET['start-time'], ENT_QUOTES);
-$endTime = htmlspecialchars($_GET['end-time'], ENT_QUOTES);
 
 $now = time();
 $oneHour = 60*60;
 $oneHourAgo = $now - $oneHour;
 $format = 'Y-m-d\\TH:i';
 
-if(empty($startTime)){
-    $startTime = date($format, $oneHourAgo);
-}
+$startTime = htmlspecialchars($_GET['start-time'] ?? date($format, $oneHourAgo), ENT_QUOTES);
+$endTime = htmlspecialchars($_GET['end-time'] ?? date($format, $now), ENT_QUOTES);
+$threshold = htmlspecialchars($_GET['threshold'] ?? 1, ENT_QUOTES);
 
-if(empty($endTime)){
-    $endTime = date($format, $now);
-}
-
-$getTops = function() use ($module, $startTime, $endTime){
+$getTops = function() use ($module, $startTime, $endTime, $threshold){
     $module->query('set @start = ?', $startTime);
     $module->query('set @end = ?', $endTime);
 
@@ -230,12 +225,12 @@ $getTops = function() use ($module, $startTime, $endTime){
         $totals['time'] += $row['duration'];
     }
 
-    $threshold = $totals['time']/100;
+    $thresholdTime = $totals['time'] * $threshold/100;
     $tops = [];
     foreach($groups as $isApi=>$types){
         foreach($types as $type=>$identifiers){
             foreach($identifiers as $identifier=>$details){
-                if($details['time'] < $threshold){
+                if($details['time'] < $thresholdTime){
                     continue;
                 }
 
@@ -290,6 +285,11 @@ foreach($tops as $top){
     <div class='controls'>
         <label>Start Time:</label><input name='start-time' type='datetime-local' value='<?=$startTime?>'><br>
         <label>End Time:</label><input name='end-time' type='datetime-local' value='<?=$endTime?>'><br>
+        Display calls using at least <input name='threshold' value='<?=$threshold?>' style='width: 26px; text-align: right'>% of total CPU time
+        <a href="javascript:;" class="help" onclick="
+            simpleDialog('CPU time is often a reasonable proxy for DB load. The only known significant exceptions are Flight Tracker crons (which use sleep calls).');
+        ">?</a>
+        <br><br>
         <button>Apply</button>
     </div>
     <table></table>
@@ -308,10 +308,6 @@ foreach($tops as $top){
         label{
             display: inline-block;
             min-width: 75px;
-        }
-
-        input{
-            min-width: 200px;
         }
     }
 
