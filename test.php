@@ -250,6 +250,11 @@ $getTops = function() use ($module, $startTime, $endTime, $threshold, $includeIn
         $countCall($row, $totals);
     }
 
+    if($totals['time'] === 0){
+        // Allow for testing on localhost with minimal traffic totalling 0 seconds.
+        return [];
+    }
+
     $thresholdTime = $totals['time'] * $threshold/100;
     $tops = [];
     foreach($groups as $isApi=>$types){
@@ -286,7 +291,7 @@ $getTops = function() use ($module, $startTime, $endTime, $threshold, $includeIn
 $tops = $getTops();
 $columns = [];
 $sortColumn = 0;
-foreach(array_keys($tops[0]) as $i=>$column){
+foreach(array_keys($tops[0] ?? []) as $i=>$column){
     $columns[] = [
         'title' => $column,
         'orderSequence' => ['desc', 'asc'],
