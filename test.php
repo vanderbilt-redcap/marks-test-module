@@ -2,7 +2,6 @@
 
 /**
 TODO
-    move complex time calcs from SQL to PHP
     Add title header above table
     add note saying requests & time are counted twice between different types (user/project/specificUrl/generalUrl)
         It is still useful to see different types side by side to determine top usage, but totals & percents will add up to more than 100% across types.
@@ -67,9 +66,10 @@ $getTops = function() use ($module, $startTime, $endTime, $threshold, $includeIn
     $groups = [];
     $totals = [];
 
-    $countCall = function($row, &$typeDetails){
+    $countCall = function($row, &$typeDetails) use ($startTime, $endTime){
+        $overlap = min(strtotime($row['call_end']), strtotime($endTime)) - max(strtotime($row['call_start']), strtotime($startTime));
         $typeDetails['calls']++;
-        $typeDetails['time'] += $row['duration'];
+        $typeDetails['time'] += $overlap;
     };
 
     $userColumnName = 'User';
@@ -85,19 +85,8 @@ $getTops = function() use ($module, $startTime, $endTime, $threshold, $includeIn
             p.app_title,
             full_url as '$specificURLColumnName',
             page = 'api/index.php' as is_api,
-            timestampdiff(
-                second,
-                if(
-                    ts > @start,
-                    ts,
-                    @start
-                ),
-                if(
-                    date_add(ts, interval script_execution_time second) < @end,
-                    date_add(ts, interval script_execution_time second),
-                    @end
-                )
-            ) as duration
+            ts as call_start,
+            date_add(ts, interval script_execution_time second) as call_end
         from (
             select
                 r.log_view_id,
@@ -195,19 +184,8 @@ $getTops = function() use ($module, $startTime, $endTime, $threshold, $includeIn
         select
             cron_name,
             directory_prefix,
-            timestampdiff(
-                second,
-                if(
-                    cron_run_start > @start,
-                    cron_run_start,
-                    @start
-                ),
-                if(
-                    cron_run_end < @end,
-                    cron_run_end,
-                    @end
-                )
-            ) as duration
+            cron_run_start as call_start,
+            cron_run_end as call_end
         from (
             select
                 cron_id,
