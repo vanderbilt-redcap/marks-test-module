@@ -2,7 +2,6 @@
 
 /**
 TODO
-    div by zero error when $totals['time'] is empty/0
     move complex time calcs from SQL to PHP
     Add title header above table
     add note saying requests & time are counted twice between different types (user/project/specificUrl/generalUrl)
@@ -250,7 +249,7 @@ $getTops = function() use ($module, $startTime, $endTime, $threshold, $includeIn
         $countCall($row, $totals);
     }
 
-    if($totals['time'] === 0){
+    if(empty($totals['time'])){
         // Allow for testing on localhost with minimal traffic totalling 0 seconds.
         return [];
     }
