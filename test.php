@@ -3,7 +3,7 @@
 /**
 TODO
     Run by Rob
-        Bump stats up to two weeks or whatever cron history retension period is?
+        Bump stats up to two weeks or whatever cron history retention period is?
         If not...
             Prevent user from entering time range spanning cutoff where request traffic is deleted, but cron history remains
             Consider avoiding stats deletion for top users
@@ -26,15 +26,14 @@ TODO
     Review all lines, rename any language
     Move to REDCap core or its own module
     Unit test the queries?  The may still be inaccurate!
-    if/when we want a more advanced interface
-        show quick lists of current tops w/ links to stats for each showing hourly usage
-            maybe not feasible
-                line chart w/ area underneath broken up by one category at a time?  Can then drill down into that category to break it down further by another category?
-        For each line, should we show +/- for last hour, last X hours, yesterday, last week, last month?
+    Consider line charts?
+        line chart w/ area underneath broken up by one category at a time?  Can then drill down into that category to break it down further by another category?
+        alternatively, could keep current table and add linkes for each "Type" that display it over time (e.g. line graph, or table w/ totals by the hour)                
+        If we don't hadd line charts, consider this:
+            For each line, should we show +/- for last hour, last X hours, yesterday, last week, last month?
     Remember
         If we need to run summaries on a cron, and we're implementing this in a module
             use a timed cron!  it will work just fine as-is in this case
-        Store 3 days instead of 1?  Maybe not... 1 day already takes up 250 gigs!
         down the road
             Could include module usage stats to show DB usage for settings, logs, etc.  Could find bad actors that add too many settings/logs, don't clean up old logs, etc.
             Could also include record stats records cache, maybe with "potential data points" by comparing to metadata table, w/ button to verify
