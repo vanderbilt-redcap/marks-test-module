@@ -289,6 +289,8 @@ foreach($tops as $top){
 <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js" integrity="sha512-BkpSL20WETFylMrcirBahHfSnY++H2O1W+UnEEO4yNIl+jI2+zowyoGJpbtk6bx97fBXf++WJHSSK2MV4ghPcg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <div id='datacore-customizations-module-container'>
+    <h4>Top Resource Usage Report</h4>
+    <br>
     <div class='controls'>
         <label>Start Time:</label><input name='start-time' type='datetime-local' value='<?=$startTime?>'><br>
         <label>End Time:</label><input name='end-time' type='datetime-local' value='<?=$endTime?>'><br>
