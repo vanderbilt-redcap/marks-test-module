@@ -298,6 +298,7 @@ $addSplunkLink = function($text){
     <ul>
         <li>CPU usage & call counts track most but not all HTTP requests. See <?=$addSplunkLink("your web server's logs")?> for ALL requests.</li>
         <li>Hours & percentages represent an accurate portion of the total, but are duplicated between "Types" (may add up to more than 100%).  For example, if a user makes API requests on a single project totaling 70% of the server's CPU usage, seperate lines for the user AND project will be included (both showing 70%).  Aggregating stats like this is important when usage within a single "Type" becomes excessive (e.g. one user across many projects, or many users on one project).</li>
+        <li><a target='_blank' href='https://github.com/vanderbilt-redcap/external-module-framework-docs/blob/main/crons.md#timed-crons-deprecated'>External Module Timed Crons</a> are not currently included in these status.
     </ul>
     <div class='controls'>
         <label>Start Time:</label><input name='start-time' type='datetime-local' value='<?=$startTime?>'><br>
