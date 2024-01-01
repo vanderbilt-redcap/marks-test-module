@@ -2,31 +2,30 @@
 
 /**
 TODO
-    Add title header above table
     add note saying requests & time are counted twice between different types (user/project/specificUrl/generalUrl)
         It is still useful to see different types side by side to determine top usage, but totals & percents will add up to more than 100% across types.
     add tool tip saying percentages are not exact (not accounting for some requests, see at VUMC Splunk for stats on all requests)
-    There are still two /api urls sometimes
-    Come up w/ basic plan for more historical data (run by Rob before executing)
-        Consider avoiding stats deletion for items in this query
-        Query to figure out what percentage of rows would be left
-        Multiple by percentage of table size to estimate space usage
-            SELECT TABLE_NAME, ROUND((DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024) AS `Size (MB)`
-            FROM
-                information_schema.TABLES
-            WHERE
-                TABLE_name in ("redcap_log_view_requests", "redcap_log_view")    
-        store & compare with history for previous days?
-        store daily via logs table?
-            $r = $module->queryLogs('
-                    select usage_summary
-                    order by timestamp
-                    desc limit 1
-                ', []);
-        figure out size of summary, and clean up old logs after X time
-        Ask Scott about summarizing performance data
     Run by Rob
-    Prevent user from entering time range spanning cutoff where request traffic is deleted, but cron history remains
+        Bump stats up to two weeks or whatever cron history retension period is?
+        If not...
+            Prevent user from entering time range spanning cutoff where request traffic is deleted, but cron history remains
+            Consider avoiding stats deletion for top users
+            Query to figure out what percentage of rows would be left
+            Multiple by percentage of table size to estimate space usage
+                SELECT TABLE_NAME, ROUND((DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024) AS `Size (MB)`
+                FROM
+                    information_schema.TABLES
+                WHERE
+                    TABLE_name in ("redcap_log_view_requests", "redcap_log_view")    
+            store & compare with history for previous days?
+            store daily via logs table?
+                $r = $module->queryLogs('
+                        select usage_summary
+                        order by timestamp
+                        desc limit 1
+                    ', []);
+            figure out size of summary, and clean up old logs after X time
+            Ask Scott about summarizing performance data
     Review all lines, rename any language
     Move to REDCap core or its own module
     Unit test the queries?  The may still be inaccurate!
