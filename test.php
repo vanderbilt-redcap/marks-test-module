@@ -2,9 +2,6 @@
 
 /**
 TODO
-    add note saying requests & time are counted twice between different types (user/project/specificUrl/generalUrl)
-        It is still useful to see different types side by side to determine top usage, but totals & percents will add up to more than 100% across types.
-    add tool tip saying percentages are not exact (not accounting for some requests, see at VUMC Splunk for stats on all requests)
     Run by Rob
         Bump stats up to two weeks or whatever cron history retension period is?
         If not...
@@ -283,13 +280,26 @@ foreach($tops as $top){
     $rows[] = array_values($top);
 }
 
+$addSplunkLink = function($text){
+    if(isVanderbilt()){
+        return "<a target='_blank' href='https://splunk.app.vumc.org/en-US/app/search/search?s=%2FservicesNS%2Fmceverm%2Fsearch%2Fsaved%2Fsearches%2FMost%2520active%2520REDCap%2520URLs%2520in%2520the%2520last%2520week&display.page.search.mode=fast&dispatch.sample_ratio=1&q=search%20index%3D%22victr_ori%22%20sourcetype%3Daccess_combined%0Ahost%20IN%20(ori1007lp%2C%20ori1008lp)%0A%7C%20rex%20field%3D_raw%20%22(%3Fms)%5E(%3FP%3Cclient_ip%3E(%5C%5Cd%7B1%2C3%7D%5C%5C.)%7B3%7D%5C%5Cd%7B1%2C3%7D)%5C%5Cs%2B(%3FP%3Cremote_logname%3E%5B%5C%5Cw-%5D%2B)%5C%5Cs%2B(%3FP%3Cremote_username%3E%5B%5C%5Cw-%5D%2B)%5C%5Cs(%3FP%3Ctimestamp%3E%5C%5C%5B%5C%5Cd%7B1%2C2%7D%2F%5C%5Cw%2B%2F20%5C%5Cd%7B2%7D%3A%5C%5Cd%7B2%7D%3A%5C%5Cd%7B2%7D%3A%5C%5Cd%7B2%7D%5C%5Cs%5C%5C-%5C%5Cd%7B4%7D%5C%5C%5D)%5C%5Cs%5C%22(%3FP%3Crequest_method%3E%5BA-Z%5D%2B)%5C%5Cs(%3FP%3Crequest_first_line%3E%5B%5E%5C%22%5D%2B%5C%5Cw%2B%5B%5E%5C%22%5D%2B)%5C%22%5C%5Cs(%3FP%3Cresponse%3E%5C%5Cd%7B1%2C4%7D)%5C%5Cs(%3FP%3Cresponse_bytes%3E%5B%5C%5Cd-%5D%2B)%5C%5Cs(%3FP%3Cresponse_time%3E%5C%5Cd%2B)ms%5C%5Cs(%3FP%3Cresponse_pid%3E%5C%5Cd%2B)%5C%5Cs%5C%22(%3FP%3Creferrer%3E%5B%5E%5C%22%5D%2B)%5C%22%5C%5Cs%5C%22(%3FP%3Cuser_agent%3E%5B%5E%5C%22%5D%2B)%5C%22%22%20offset_field%3D_extracted_fields_bounds%20%7C%20rex%20field%3D_raw%20%22%5E(%3F%3A%5B%5E%3D%5C%5Cn%5D*%3D)%7B3%7D(%3FP%3Cid%3E%5B%5E%5C%22%5D%2B)%22%20offset_field%3D_extracted_fields_bounds0%20%7C%20rex%20field%3D_raw%20%22%5E(%3FP%3Cip%3E%5B%5E%20%5D%2B)%22%20offset_field%3D_extracted_fields_bounds1%20%7C%20rex%20field%3D_raw%20%22%5E(%3FP%3Cclient_ip%3E(%5C%5Cd%7B1%2C3%7D%5C%5C.)%7B3%7D%5C%5Cd%7B1%2C3%7D)%5C%5Cs%2B(%3FP%3Cremote_logname%3E%5B%5C%5Cw-%5D%2B)%5C%5Cs%2B(%3FP%3Cremote_username%3E%5B%5C%5Cw-%5D%2B)%5C%5Cs(%3FP%3Ctimestamp%3E%5C%5C%5B%5C%5Cd%7B1%2C2%7D%2F%5C%5Cw%2B%2F20%5C%5Cd%7B2%7D%3A%5C%5Cd%7B2%7D%3A%5C%5Cd%7B2%7D%3A%5C%5Cd%7B2%7D%5C%5Cs%5C%5C-%5C%5Cd%7B4%7D%5C%5C%5D)%5C%5Cs%5C%22(%3FP%3Crequest_method%3E%5BA-Z%5D%2B)%5C%5Cs(%3FP%3Crequest_first_line%3E%5B%5E%5C%22%5D%2B%5C%5Cw%2B%5B%5E%5C%22%5D%2B)%5C%22%5C%5Cs(%3FP%3Cresponse%3E%5C%5Cd%7B1%2C4%7D)%5C%5Cs(%3FP%3Cresponse_bytes%3E%5B%5C%5Cd-%5D%2B)%5C%5Cs(%3FP%3Cresponse_time%3E%5C%5Cd%2B)ms%5C%5Cs(%3FP%3Cresponse_pid%3E%5C%5Cd%2B)%5C%5Cs%5C%22(%3FP%3Creferrer%3E%5B%5E%5C%22%5D%2B)%5C%22%5C%5Cs%5C%22(%3FP%3Cuser_agent%3E%5B%5E%5C%22%5D%2B)%5C%22%22%20offset_field%3D_extracted_fields_bounds2%20%7C%20rex%20field%3D_raw%20%22%5E(%3FP%3Csrc_ip%3E%5B%5E%5C%5C-%5D%2B)%22%20offset_field%3D_extracted_fields_bounds3%0A%7C%20eval%20request_first_line%3Dsubstr(request_first_line%2C%201%2C%20200)%20%7C%20eval%20minutes%3Dresponse_time%2F1000%2F60%20%7C%20stats%20count(request_first_line)%20as%20requests%2C%20sum(response_time)%2C%20sum(minutes)%20as%20total_minutes%20BY%20request_first_line%20%7C%20eval%20seconds_per_request%3Dround(total_minutes*60%2Frequests%2C%203)%20%7C%20eval%20total_minutes%3Dround(total_minutes%2C%201)%20%7C%20sort%20-total_minutes&earliest=-7d%40h&latest=now&sid=1704134165.965092_F6F4DD87-E686-4BEA-8022-198EA70D6DAF'>$text</a>";
+    }
+    else{
+        return $text;
+    }
+};
+
 ?>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js" integrity="sha512-BkpSL20WETFylMrcirBahHfSnY++H2O1W+UnEEO4yNIl+jI2+zowyoGJpbtk6bx97fBXf++WJHSSK2MV4ghPcg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <div id='datacore-customizations-module-container'>
     <h4>Top Resource Usage Report</h4>
-    <br>
+    <p>Things to remember when interpreting these stats:</p>
+    <ul>
+        <li>CPU usage & call counts track most but not all HTTP requests. See <?=$addSplunkLink("your web server's logs")?> for ALL requests.</li>
+        <li>Hours & percentages represent an accurate portion of the total, but are duplicated between "Types" (may add up to more than 100%).  For example, if a user makes API requests on a single project totaling 70% of the server's CPU usage, seperate lines for the user AND project will be included (both showing 70%).  Aggregating stats like this is important when usage within a single "Type" becomes excessive (e.g. one user across many projects, or many users on one project).</li>
+    </ul>
     <div class='controls'>
         <label>Start Time:</label><input name='start-time' type='datetime-local' value='<?=$startTime?>'><br>
         <label>End Time:</label><input name='end-time' type='datetime-local' value='<?=$endTime?>'><br>
@@ -315,6 +325,7 @@ foreach($tops as $top){
     #datacore-customizations-module-container .controls{
         position: relative;
         z-index: 10;
+        margin-top: 25px;
         margin-bottom: -20px;
 
         label{
@@ -348,10 +359,10 @@ foreach($tops as $top){
             text-align: right;
             padding-right: 28px;
         }
-    }
 
-    #datacore-customizations-module-container td a{
-        text-decoration: underline;
+        a{
+            text-decoration: underline;
+        }
     }
 </style>
 
