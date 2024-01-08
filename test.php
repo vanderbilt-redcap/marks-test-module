@@ -1,30 +1,17 @@
 <?php namespace MarksTestModule;
 
 /**
-TODO
-    Run by Rob
-        Bump stats up to two weeks or whatever cron history retention period is?
+ TODO
+    Bump stats up to two weeks or whatever cron history retention period is now?  Rob said it was OK.
         If not...
             Prevent user from entering time range spanning cutoff where request traffic is deleted, but cron history remains
-            Consider avoiding stats deletion for top users
-            Query to figure out what percentage of rows would be left
-            Multiple by percentage of table size to estimate space usage
-                SELECT TABLE_NAME, ROUND((DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024) AS `Size (MB)`
-                FROM
-                    information_schema.TABLES
-                WHERE
-                    TABLE_name in ("redcap_log_view_requests", "redcap_log_view")    
-            store & compare with history for previous days?
-            store daily via logs table?
-                $r = $module->queryLogs('
-                        select usage_summary
-                        order by timestamp
-                        desc limit 1
-                    ', []);
-            figure out size of summary, and clean up old logs after X time
-            Ask Scott about summarizing performance data
+    Copy details from here to README
+        https://victr.slack.com/archives/C04SXD42JGZ/p1703865324368079
+    Add links to user/project specific URLs?
     Review all lines, rename any language
-    Move to REDCap core or its own module
+    Move to REDCap core (make PR for Rob)
+    Figure out goal next steps, and talk to Rob about them
+        Maybe auto throttle after connection limit reached now?
     Unit test the queries?  The may still be inaccurate!
     Consider line charts?
         line chart w/ area underneath broken up by one category at a time?  Can then drill down into that category to break it down further by another category?
