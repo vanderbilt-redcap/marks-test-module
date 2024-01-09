@@ -5,10 +5,11 @@
     Add links to user/project specific URLs?
     Review all lines, rename any language
     Move to REDCap core (in redcap branch)
-    Bump stats up to 7 days to match cron history retention period.  Rob said it was OK.
-        Prevent user from entering time range spanning cutoff where request traffic is deleted
-            This relevant even if cutoff matches cron history
-            Different tables get cleared at different time, so we might want to limit data to whichever table is newer
+    Started via stash
+        Bump stats up to 7 days to match cron history retention period.  Rob said it was OK.
+            Prevent user from entering time range spanning cutoff where request traffic is deleted
+                This relevant even if cutoff matches cron history
+                Different tables get cleared at different time, so we might want to limit data to whichever table is newer
     Create PR for Rob
     Figure out goal next steps, and talk to Rob about them
         Maybe auto throttle after connection limit reached now?
