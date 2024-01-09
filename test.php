@@ -3,7 +3,8 @@
 /**
  TODO
     Add links to user/project specific URLs?
-    Review all lines, rename any language
+    Review all lines
+        Extract all language strings, and review them in the process
     Move to REDCap core (in redcap branch)
     Started via stash
         Bump stats up to 7 days to match cron history retention period.  Rob said it was OK.
