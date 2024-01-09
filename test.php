@@ -2,8 +2,6 @@
 
 /**
  TODO
-    Copy details from here to README
-        https://victr.slack.com/archives/C04SXD42JGZ/p1703865324368079
     Add links to user/project specific URLs?
     Review all lines, rename any language
     Move to REDCap core (in redcap branch)
