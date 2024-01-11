@@ -2,6 +2,16 @@
 
 /**
  TODO
+    Detect when lines need to roll up under other lines
+        Scenario
+            All API usage is 20%
+                Project 1 usage 2%
+                Other 18%
+            Project 1 usage is 5%
+                API usage 2%
+                UI usage 3%
+        Or would it be better to have two modes (overall vs. specific)?
+            Coming up with another scenario with multiple users & projects might help answer this
     Add links to user/project specific URLs?
     Review all lines
         Extract all language strings, and review them in the process
