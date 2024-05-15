@@ -3,7 +3,6 @@
 /**
  TODO
     Also consider showing requests with ridiculous counts?  Maybe there was some way to catch the "Failed API request" before they bloated the log for 3.5 years!
-    Search box not clickable on prod
     Add option for type (to show only cron requests for example, like I needed when troubleshooting catmh issue)
     Detect when lines need to roll up under other lines
         Scenario
@@ -326,7 +325,6 @@ $addSplunkLink = function($text){
 
     #datacore-customizations-module-container .controls{
         position: relative;
-        z-index: 10;
         margin-top: 25px;
         margin-bottom: -20px;
 
