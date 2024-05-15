@@ -12,19 +12,19 @@
                 Prevent user from entering time range spanning cutoff where request traffic is deleted
                     This relevant even if cutoff matches cron history
                     Different tables get cleared at different time, so we might want to limit data to whichever table is newer
-    After moved to REDCap core, considering implementing & testing via unit test
-    Also consider showing requests with ridiculous counts?  Maybe there was some way to catch the "Failed API request" before they bloated the log for 3.5 years!
     Add option for type (to show only cron requests for example, like I needed when troubleshooting catmh issue)
-    Detect when lines need to roll up under other lines
-        Scenario
-            All API usage is 20%
-                Project 1 usage 2%
-                Other 18%
-            Project 1 usage is 5%
-                API usage 2%
-                UI usage 3%
-        Or would it be better to have two modes (overall vs. specific)?
-            Coming up with another scenario with multiple users & projects might help answer this
+    Also consider showing requests with ridiculous counts?  Maybe there was some way to catch the "Failed API request" before they bloated the log for 3.5 years!
+    Revisit "Things to remember" section
+        Detect when lines need to roll up under other lines?
+            Scenario
+                All API usage is 20%
+                    Project 1 usage 2%
+                    Other 18%
+                Project 1 usage is 5%
+                    API usage 2%
+                    UI usage 3%
+            Or would it be better to have two modes (overall vs. specific)?
+                Coming up with another scenario with multiple users & projects might help answer this
     Add links to user/project specific URLs?
     Figure out goal next steps, and talk to Rob about them
         Maybe auto throttle after connection limit reached now?
