@@ -2,6 +2,17 @@
 
 /**
  TODO
+    Move to REDCap core (in redcap branch)
+    Review all lines
+        Extract all language strings, and review them in the process
+    Unit test the queries?  The may still be inaccurate!
+    Create PR for Rob
+        Started via stash
+            Bump stats up to 7 days to match cron history retention period.  Rob said it was OK.
+                Prevent user from entering time range spanning cutoff where request traffic is deleted
+                    This relevant even if cutoff matches cron history
+                    Different tables get cleared at different time, so we might want to limit data to whichever table is newer
+    After moved to REDCap core, considering implementing & testing via unit test
     Also consider showing requests with ridiculous counts?  Maybe there was some way to catch the "Failed API request" before they bloated the log for 3.5 years!
     Add option for type (to show only cron requests for example, like I needed when troubleshooting catmh issue)
     Detect when lines need to roll up under other lines
@@ -15,29 +26,16 @@
         Or would it be better to have two modes (overall vs. specific)?
             Coming up with another scenario with multiple users & projects might help answer this
     Add links to user/project specific URLs?
-    Review all lines
-        Extract all language strings, and review them in the process
-    Move to REDCap core (in redcap branch)
-    Started via stash
-        Bump stats up to 7 days to match cron history retention period.  Rob said it was OK.
-            Prevent user from entering time range spanning cutoff where request traffic is deleted
-                This relevant even if cutoff matches cron history
-                Different tables get cleared at different time, so we might want to limit data to whichever table is newer
-    Create PR for Rob
     Figure out goal next steps, and talk to Rob about them
         Maybe auto throttle after connection limit reached now?
-    Unit test the queries?  The may still be inaccurate!
     Consider line charts?
         line chart w/ area underneath broken up by one category at a time?  Can then drill down into that category to break it down further by another category?
         alternatively, could keep current table and add linkes for each "Type" that display it over time (e.g. line graph, or table w/ totals by the hour)                
         If we don't hadd line charts, consider this:
             For each line, should we show +/- for last hour, last X hours, yesterday, last week, last month?
-    Remember
-        If we need to run summaries on a cron, and we're implementing this in a module
-            use a timed cron!  it will work just fine as-is in this case
-        down the road
-            Could include module usage stats to show DB usage for settings, logs, etc.  Could find bad actors that add too many settings/logs, don't clean up old logs, etc.
-            Could also include record stats records cache, maybe with "potential data points" by comparing to metadata table, w/ button to verify
+    Down the road
+        Could include module usage stats to show DB usage for settings, logs, etc.  Could find bad actors that add too many settings/logs, don't clean up old logs, etc.
+        Could also include record stats records cache, maybe with "potential data points" by comparing to metadata table, w/ button to verify
  */
 
 const CPU_PERCENT_COLUMN_NAME = 'Percent of Total CPU Time';
