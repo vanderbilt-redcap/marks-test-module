@@ -12,15 +12,5 @@
     ],
     "no-auth-pages":[
         "cors-example"
-    ],
-    "links": {
-        "control-center": [
-            {
-                "name": "Top Usage Report",
-                "icon": "fas fa-file",
-                "url": "test.php",
-                "show-header-and-footer": true
-            }
-        ]
-    }
+    ]
 }
