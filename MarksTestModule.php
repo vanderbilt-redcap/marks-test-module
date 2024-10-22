@@ -1,25 +1,17 @@
 <?php namespace Vanderbilt\MarksTestModule;
 
-use Exception;
-use ExternalModules\ExternalModules;
-
 class MarksTestModule extends \ExternalModules\AbstractExternalModule{
     function redcap_every_page_top(){
-        if(!isset($_GET['enable-datacore-customizations-module-troubleshooting'])){
+        if(!isset($_GET['enable-marks-test-module-troubleshooting'])){
             return;
-        }
-
-        if(!\System::useReadReplicaDB()){
-            $result = 'replica not being used!';
-        }
-        else{
-            $result = \ExternalModules\ExternalModules::getDiscoverableModules();
         }
 
         ?>
         <script>
-            console.log('Datacore Customizations Module Troubleshooting:', <?=json_encode($result)?>)
+            console.log("Mark's Test Module Troubleshooting")
         </script>
         <?php
+
+        throw new \Exception("This is a test Exception from Mark's Test Module.");
     }
 }
