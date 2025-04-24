@@ -64,7 +64,7 @@ class MarksTestModule extends \ExternalModules\AbstractExternalModule{
                     thistext = phrases[i];
                     // Get URL to call
                     if (page == 'surveys/index.php') {
-                        var url = dirname(app_path_webroot.substring(0,app_path_webroot.length-1))+'/surveys/index.php?s='+getParameterByName('s')+'&__passthru='+encodeURIComponent('Surveys/speak.php')+'&q='+encodeURIComponent(thistext);
+                        var url = <?=json_encode($this->getUrl('speak.php'))?> + '&s='+getParameterByName('s')+'&__passthru='+encodeURIComponent('Surveys/speak.php')+'&q='+encodeURIComponent(thistext);
                     } else {
                         var url = app_path_webroot+'Surveys/speak.php?pid='+pid+'&q='+encodeURIComponent(thistext);
                     }

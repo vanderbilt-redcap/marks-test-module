@@ -1,15 +1,13 @@
 <?php
-
-
-
+require_once dirname(dirname(__DIR__)) . '/redcap_connect.php';
 // Check if coming from a survey
 
 use MultiLanguageManagement\MultiLanguage;
 use REDCap\Context;
-
 if (!isset($_GET['s']) || empty($_GET['s'])) exit;
+
 // Call config_functions before config file in this case since we need some setup before calling config
-require_once dirname(dirname(__FILE__)) . '/Config/init_functions.php';
+require_once APP_PATH_DOCROOT . '/Config/init_functions.php';
 // Validate and clean the survey hash, while also returning if a legacy hash
 $hash = $_GET['s'] = Survey::checkSurveyHash();
 // Set all survey attributes as global variables
@@ -19,10 +17,10 @@ $_GET['pid'] = $project_id;
 // Set flag for no authentication for survey pages
 define("NOAUTH", true);
 // Required files
-require_once dirname(dirname(__FILE__)) . '/Config/init_project.php';
+require_once APP_PATH_DOCROOT . '/Config/init_project.php';
 
 // Make sure we have the q parameter
-$q = (isset($_GET['q'])) ? trim(urldecode(rawurlencode($_GET['q']))) : 'ERROR';
+$q = 'speak.php override successful';
 
 // Set language/voice
 $context = Context::Builder()
