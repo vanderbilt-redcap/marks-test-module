@@ -11,6 +11,7 @@
         }
     ],
     "no-auth-pages":[
-        "cors-example"
+        "cors-example",
+        "speak"
     ]
 }
