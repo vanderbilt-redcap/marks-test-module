@@ -41,18 +41,8 @@ $params = array('q'=>$q, 'voice'=>$text_to_speech_language, 'hostname'=>SERVER_N
 				'service'=>'watson');
 $content = http_post('https://redcap.vumc.org/tts/index.php', $params);
 
-$browser = new Browser();
-if ($isMobileDevice || $browser->getBrowser() == 'Safari')
-{
-	// Save wav file to temp and then redirect there (only for special exceptions - e.g., mobile devices, Safari)
-	$filename = date('YmdHis') . "_tts_" . substr(sha1(rand()), 0, 6) . ".wav";
-	file_put_contents(APP_PATH_TEMP . $filename, $content);
-	redirect(APP_PATH_WEBROOT_FULL . "temp/$filename");
-}
-else
-{
-	// Output WAV audio
-	header('Pragma: anytextexeptno-cache', true);
-	header("Content-Type: audio/wav");
-	print $content;
-}
+// Output WAV audio
+header('Pragma: anytextexeptno-cache', true);
+header("Content-Type: audio/wav");
+header("Content-Length: " . strlen($content));
+print $content;
