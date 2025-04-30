@@ -1,11 +1,14 @@
 <?php
 require_once dirname(dirname(__DIR__)) . '/redcap_connect.php';
+
+
+
 // Check if coming from a survey
 
 use MultiLanguageManagement\MultiLanguage;
 use REDCap\Context;
-if (!isset($_GET['s']) || empty($_GET['s'])) exit;
 
+if (!isset($_GET['s']) || empty($_GET['s'])) exit;
 // Call config_functions before config file in this case since we need some setup before calling config
 require_once APP_PATH_DOCROOT . '/Config/init_functions.php';
 // Validate and clean the survey hash, while also returning if a legacy hash
@@ -38,11 +41,11 @@ if (!isset($_GET['q']) || !isset($text_to_speech_language)) $text_to_speech_lang
 $params = array('q'=>$q, 'voice'=>$text_to_speech_language, 'hostname'=>SERVER_NAME, 
 				'hostkeyhash'=>Stats::getServerKeyHash(), 'surveyhash'=>$_GET['s'],
 				'hosthash'=>hash('sha256', SERVER_NAME . 'bluecap' . Stats::getServerKeyHash()),
-				'service'=>'watson');
+				'service'=>'watson', 'mp3'=>'1');
 $content = http_post('https://redcap.vumc.org/tts/index.php', $params);
 
 // Output WAV audio
 header('Pragma: anytextexeptno-cache', true);
-header("Content-Type: audio/wav");
+header("Content-Type: audio/mp3");
 header("Content-Length: " . strlen($content));
 print $content;
