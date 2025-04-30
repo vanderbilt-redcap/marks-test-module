@@ -85,7 +85,7 @@ class MarksTestModule extends \ExternalModules\AbstractExternalModule{
                     // Add loop num to array (to deal with setTimeout issues)
                     sub_item_num_array[i] = i;
                     // Put slight lag on the audio tags so that it doesn't appear as a bunch of simultaneous requests to the server and overwhelm it
-                    setTimeout(function(){
+                    setTimeout(async function(){
                         // Get the URL
                         url = urls.shift();
                         // Get subitem id
@@ -97,7 +97,29 @@ class MarksTestModule extends \ExternalModules\AbstractExternalModule{
                         audioElement.setAttribute("id", audio_sub_item_id);
                         document.getElementById(audio_item_id).appendChild(audioElement);
                         sourceElement = document.createElement("source");
-                        sourceElement.setAttribute("src", url);
+
+                        /**
+                         * On VUMC servers the apache configuration strips "Content-Length" headers
+                         * that are added via PHP.  This makes it impossible to implement requests
+                         * serving audio files in a way that works on mobile browsers.
+                         * 
+                         * We work around this by using a FileReader to generate a "src='data:audio/mp3;base64,...'"
+                         * string containing the audio data instead.
+                         * 
+                         * We could modify our apache configuration to solve this, but this workaround
+                         * will automatically avoid the issue for any REDCap web server worldwide,
+                         * regarldess of configuration.
+                         */
+                        const response = await fetch(url);
+                        const blob = await response.blob();
+                        const reader = new FileReader();
+                        await new Promise((resolve, reject) => {
+                            reader.onload = resolve;
+                            reader.onerror = reject;
+                            reader.readAsDataURL(blob);
+                        });
+
+                        sourceElement.setAttribute("src", reader.result);
                         sourceElement.setAttribute("type", "audio/mp3");
                         document.getElementById(audio_sub_item_id).appendChild(sourceElement);
                         // Bind event for when audio gets to end
